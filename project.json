@@ -1,0 +1,21 @@
+{
+  "ProjectName": "Mold",
+  "Description": "Mold is a fast and powerful templating and cloning engine for PowerShell (and beyond!)",
+  "Version": "0.0.1",
+  "Manifest": {
+    "Author": "Manjunath Beli",
+    "PowerShellHostVersion": "7.4",
+    "GUID": "ac5bbfdb-fd2d-4c12-a178-15f1864c26e0",
+    "Tags": [],
+    "ProjecUri": ""
+  },
+  "Pester": {
+    "TestResult": {
+      "Enabled": true,
+      "OutputFormat": "NUnitXml"
+    },
+    "Output": {
+      "Verbosity": "Detailed"
+    }
+  }
+}
