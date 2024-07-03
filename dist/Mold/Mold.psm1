@@ -5,10 +5,25 @@ function Get-Mold {
     Write-Verbose 'This will retrive all Molds'
 }
 function Invoke-Mold {
+    [CmdletBinding()]
     param (
-        $Path 
+        [Parameter(ParameterSetName = 'TemplatePath', Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$TemplatePath,
+    
+        #TODO pending implementation. Get Manifest by name
+        [Parameter(ParameterSetName = 'Name', Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Name,
+
+        [string]$DestinationPath = (Get-Location).Path
     )
-    $data = Get-Content -Raw $Path | ConvertFrom-Json -AsHashtable
+    
+    # Validate MoldTemplate
+    Test-MoldHealth -Path $TemplatePath
+    $MoldManifest = Join-Path -Path $TemplatePath -ChildPath 'MoldManifest.json'
+
+    $data = Get-Content -Raw $MoldManifest | ConvertFrom-Json -AsHashtable
     $result = New-Object System.Collections.ArrayList
 
     $data.parameters.Keys | ForEach-Object {
@@ -19,18 +34,20 @@ function Invoke-Mold {
     }
     return $result.ToArray()
 }
-function New-Mold {
+function New-MoldManifest {
+    [CmdletBinding()]
     param (
+        [Parameter(Mandatory)]
+        [string]
         $Path
     )
+    $MoldManifest = Join-Path -Path $Path -ChildPath 'MoldManifest.json'
+    # Validation before starting the workflow
+    Test-MoldStatus -Path $Path -NewManifest
 
     ## Find Parameters
-    $template = Get-Content -Raw '/Users/beli/localwork/Mold/sample/psfunc/content.ps1'
-    $pattern = '<% MOLD_([^%]+) %>'
-    $parameters = [regex]::matches($template, $pattern)
-    $placeholders = $parameters | ForEach-Object { $_.Groups[1].Value }
-    # $placeholders
-
+    $PlaceHolders = Get-MoldPlaceHolders -Path $Path
+   
     # Process Parameters
     $parameters = [ordered]@{}
     $placeholders | ForEach-Object {
@@ -42,13 +59,17 @@ function New-Mold {
         'version'     = '0.2.0'
         'title'       = 'New PowerShell Module'
         'description' = 'Plaster template for creating the files for a PowerShell module.'
+        'guid'        = New-Guid | ForEach-Object Guid
     }
 
     $data = [ordered]@{
         metadata   = $metadata
         parameters = $parameters
     }
-    $data | ConvertTo-Json -Depth 5 | Out-File ./tmold.json
+    $data | ConvertTo-Json -Depth 5 | Out-File -FilePath $MoldManifest
+    if ($?) {
+        'Manifest created' | Write-Host -ForegroundColor Green
+    }
 }
 function Test-Mold {
     param (
@@ -86,34 +107,66 @@ class MoldQ {
 
 function GenerateQuestion {
     param(
-        [string]$variable
+        [string]$MoldVariable
     )
-    $question = [ordered]@{
-        'Caption' = 'Title caption'
-        'Message' = 'Ask your question'
-        'Prompt'  = 'small prompt'
-        'Default' = 'SomeDefault'
-    }
-    if ($variable -match '^YESNO_.+$') {
-        $question.Type = 'YESNO'
-        $question.Choice = [ordered]@{
-            'Yes' = 'Select YES'
-            'No'  = 'Select No'
+    Write-Verbose "Working on MoldVariable $MoldVariable"
+    if ($MoldVariable -match '^YESNO_.+$') {
+        $question = [ordered]@{
+            'Caption' = $MoldVariable.Split('_')[1]
+            'Message' = 'Ask your question'
+            'Prompt'  = 'Response'
+            'Type'    = 'YESNO'
+            'Default' = 'No'
+            'Choice'  = [ordered]@{
+                'Yes' = 'Select Yes'
+                'No'  = 'Select No'
+            }
         }
     }
-    if ($variable -match '^TEXT_.+$') {
-        $question.Type = 'TEXT'
+    if ($MoldVariable -match '^TEXT_.+$') {
+        $question = [ordered]@{
+            'Caption' = $MoldVariable.Split('_')[1]
+            'Message' = 'Ask your question'
+            'Prompt'  = 'Response'
+            'Type'    = 'TEXT'
+            'Default' = ''
+        }
     }
-    if ($variable -match '^CHOICE_.+$') {
-        $question.Type = 'CHOICE'
-        $question.Choice = [ordered]@{
-            'Yes'      = 'Enable pester to perform testing'
-            'MayBe'    = 'Skip pester testing'
-            'Whatever' = 'Enable pester to perform testing'
-            'No'       = 'Skip pester testing'
+    if ($MoldVariable -match '^CHOICE_.+$') {
+        $question = [ordered]@{
+            'Caption' = $MoldVariable.Split('_')[1]
+            'Message' = 'Choose One'
+            'Prompt'  = 'Response'
+            'Type'    = 'CHOICE'
+            'Default' = 'Default'
+            'Choice'  = [ordered]@{
+                'One'     = 'Selecting one'
+                'Two'     = 'Selecting Two'
+                'Three'   = 'Selecting Three'
+                'Default' = 'Selecting Default'
+            }
         }
     }
     return $question
+}
+function Get-MoldPlaceHolders {
+    param (
+        [Parameter(Mandatory)]
+        [string]
+        $Path
+    )
+
+    $Files = Get-ChildItem -Path $Path -File -Recurse
+    $PlaceHolders = @()
+    $Files | ForEach-Object {
+        Write-Verbose "Processing File $_"
+        $FileContent = Get-Content -Raw $_
+        $pattern = '<% MOLD_([^%]+) %>'
+        if ([string]::IsNullOrEmpty($FileContent)) { break }
+        $ParamMatch = [regex]::matches($FileContent, $pattern)
+        $PlaceHolders += $ParamMatch | ForEach-Object { $_.Groups[1].Value }
+    }
+    return $PlaceHolders
 }
 function Read-AwesomeHost {
     [CmdletBinding()]
@@ -145,5 +198,47 @@ function Read-AwesomeHost {
         $result = $Cs.Label[$response] -replace '&'
     }
     return $result
+}
+function Test-MoldHealth {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [string]
+        $Path
+    )
+    $ErrorActionPreference = 'Stop'
+    $MoldManifest = Join-Path -Path $Path -ChildPath 'MoldManifest.json'
+    # Check if path exists
+    if (-not(Test-Path -Path $Path)) {
+        Write-Error 'Template Path not found or accessible'
+    }
+    # Check if path exists
+    if (-not(Test-Path -Path $MoldManifest)) {
+        Write-Error 'Not a valid Mold Template, missing MoldManifest.json file'
+    }
+    #TODO MoldManifest Schema check json
+}
+function Test-MoldStatus {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [string]$Path,
+        [switch]$NewManifest
+    )
+    $ErrorActionPreference = 'Stop'
+    $MoldManifest = Join-Path -Path $Path -ChildPath 'MoldManifest.json'
+    # Check if directory exists
+    If (-not (Test-Path $Path -ErrorAction SilentlyContinue)) {
+        Write-Error 'Path provided either does not exists'
+    }
+    If (-not (Get-ChildItem $Path -ErrorAction SilentlyContinue)) {
+        Write-Error 'Path provided is empty and has no files'
+    }
+    # Check if it already has MoldManifest, if so abort
+    if ($NewManifest) {
+        if (Test-Path $MoldManifest) {
+            Write-Error 'MoldManifest file already present, use Update-Mold or start over'
+        }
+    }
 }
 

@@ -1,30 +1,43 @@
 function GenerateQuestion {
     param(
-        [string]$variable
+        [string]$MoldVariable
     )
-    $question = [ordered]@{
-        'Caption' = 'Title caption'
-        'Message' = 'Ask your question'
-        'Prompt'  = 'small prompt'
-        'Default' = 'SomeDefault'
-    }
-    if ($variable -match '^YESNO_.+$') {
-        $question.Type = 'YESNO'
-        $question.Choice = [ordered]@{
-            'Yes' = 'Select YES'
-            'No'  = 'Select No'
+    Write-Verbose "Working on MoldVariable $MoldVariable"
+    if ($MoldVariable -match '^YESNO_.+$') {
+        $question = [ordered]@{
+            'Caption' = $MoldVariable.Split('_')[1]
+            'Message' = 'Ask your question'
+            'Prompt'  = 'Response'
+            'Type'    = 'YESNO'
+            'Default' = 'No'
+            'Choice'  = [ordered]@{
+                'Yes' = 'Select Yes'
+                'No'  = 'Select No'
+            }
         }
     }
-    if ($variable -match '^TEXT_.+$') {
-        $question.Type = 'TEXT'
+    if ($MoldVariable -match '^TEXT_.+$') {
+        $question = [ordered]@{
+            'Caption' = $MoldVariable.Split('_')[1]
+            'Message' = 'Ask your question'
+            'Prompt'  = 'Response'
+            'Type'    = 'TEXT'
+            'Default' = ''
+        }
     }
-    if ($variable -match '^CHOICE_.+$') {
-        $question.Type = 'CHOICE'
-        $question.Choice = [ordered]@{
-            'Yes'      = 'Enable pester to perform testing'
-            'MayBe'    = 'Skip pester testing'
-            'Whatever' = 'Enable pester to perform testing'
-            'No'       = 'Skip pester testing'
+    if ($MoldVariable -match '^CHOICE_.+$') {
+        $question = [ordered]@{
+            'Caption' = $MoldVariable.Split('_')[1]
+            'Message' = 'Choose One'
+            'Prompt'  = 'Response'
+            'Type'    = 'CHOICE'
+            'Default' = 'Default'
+            'Choice'  = [ordered]@{
+                'One'     = 'Selecting one'
+                'Two'     = 'Selecting Two'
+                'Three'   = 'Selecting Three'
+                'Default' = 'Selecting Default'
+            }
         }
     }
     return $question

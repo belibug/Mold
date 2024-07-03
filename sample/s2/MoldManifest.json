@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "name": "NewPowerShellModule",
+    "version": "0.2.0",
+    "title": "New PowerShell Module",
+    "description": "Plaster template for creating the files for a PowerShell module.",
+    "guid": "7dd902f8-da89-4160-8708-2311761b6713"
+  },
+  "parameters": {
+    "StudentName": {
+      "Caption": "StudentName",
+      "Message": "Ask your question",
+      "Prompt": "Response",
+      "Type": "TEXT",
+      "Default": ""
+    },
+    "PASSED": {
+      "Caption": "PASSED",
+      "Message": "Ask your question",
+      "Prompt": "Response",
+      "Type": "YESNO",
+      "Default": "No",
+      "Choice": {
+        "Yes": "Select Yes",
+        "No": "Select No"
+      }
+    },
+    "Myself": {
+      "Caption": "Myself",
+      "Message": "Ask your question",
+      "Prompt": "Response",
+      "Type": "TEXT",
+      "Default": ""
+    }
+  }
+}

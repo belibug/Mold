@@ -3,39 +3,40 @@
     "name": "NewPowerShellModule",
     "version": "0.2.0",
     "title": "New PowerShell Module",
-    "description": "Plaster template for creating the files for a PowerShell module."
+    "description": "Plaster template for creating the files for a PowerShell module.",
+    "guid": "76faa849-319c-4b3f-811b-fbc050f7fb50"
   },
   "parameters": {
-    "FuncName": {
-      "Caption": "Function Name",
+    "HELP": {
+      "Caption": "Title caption",
       "Message": "Ask your question",
       "Prompt": "small prompt",
       "Default": "SomeDefault",
-      "Type": "TEXT"
-    },
-    "HELP": {
-      "Caption": "Asking Help",
-      "Message": "Ask your question",
-      "Prompt": "small prompt",
-      "Default": "Yes",
       "Type": "YESNO",
       "Choice": {
         "Yes": "Select YES",
         "No": "Select No"
       }
     },
+    "FuncName": {
+      "Caption": "Title caption",
+      "Message": "Ask your question",
+      "Prompt": "small prompt",
+      "Default": "SomeDefault",
+      "Type": "TEXT"
+    },
     "Param1": {
-      "Caption": "Parameter 1",
+      "Caption": "Title caption",
       "Message": "Ask your question",
       "Prompt": "small prompt",
       "Default": "SomeDefault",
       "Type": "TEXT"
     },
     "Param2": {
-      "Caption": "Parameter 2",
+      "Caption": "Title caption",
       "Message": "Ask your question",
       "Prompt": "small prompt",
-      "Default": "MayBe",
+      "Default": "SomeDefault",
       "Type": "CHOICE",
       "Choice": {
         "Yes": "Enable pester to perform testing",
@@ -45,7 +46,21 @@
       }
     },
     "Content": {
-      "Caption": "Some Content",
+      "Caption": "Title caption",
+      "Message": "Ask your question",
+      "Prompt": "small prompt",
+      "Default": "SomeDefault",
+      "Type": "TEXT"
+    },
+    "FineDude": {
+      "Caption": "Title caption",
+      "Message": "Ask your question",
+      "Prompt": "small prompt",
+      "Default": "SomeDefault",
+      "Type": "TEXT"
+    },
+    "InsideXML": {
+      "Caption": "Title caption",
       "Message": "Ask your question",
       "Prompt": "small prompt",
       "Default": "SomeDefault",

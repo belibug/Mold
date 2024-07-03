@@ -1,15 +1,17 @@
-function New-Mold {
+function New-MoldManifest {
+    [CmdletBinding()]
     param (
+        [Parameter(Mandatory)]
+        [string]
         $Path
     )
+    $MoldManifest = Join-Path -Path $Path -ChildPath 'MoldManifest.json'
+    # Validation before starting the workflow
+    Test-MoldStatus -Path $Path -NewManifest
 
     ## Find Parameters
-    $template = Get-Content -Raw '/Users/beli/localwork/Mold/sample/psfunc/content.ps1'
-    $pattern = '<% MOLD_([^%]+) %>'
-    $parameters = [regex]::matches($template, $pattern)
-    $placeholders = $parameters | ForEach-Object { $_.Groups[1].Value }
-    # $placeholders
-
+    $PlaceHolders = Get-MoldPlaceHolders -Path $Path
+   
     # Process Parameters
     $parameters = [ordered]@{}
     $placeholders | ForEach-Object {
@@ -21,11 +23,15 @@ function New-Mold {
         'version'     = '0.2.0'
         'title'       = 'New PowerShell Module'
         'description' = 'Plaster template for creating the files for a PowerShell module.'
+        'guid'        = New-Guid | ForEach-Object Guid
     }
 
     $data = [ordered]@{
         metadata   = $metadata
         parameters = $parameters
     }
-    $data | ConvertTo-Json -Depth 5 | Out-File ./tmold.json
+    $data | ConvertTo-Json -Depth 5 | Out-File -FilePath $MoldManifest
+    if ($?) {
+        'Manifest created' | Write-Host -ForegroundColor Green
+    }
 }
