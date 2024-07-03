@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "name": "NewPowerShellModule",
+    "version": "0.2.0",
+    "title": "New PowerShell Module",
+    "description": "Plaster template for creating the files for a PowerShell module."
+  },
+  "parameters": {
+    "FuncName": {
+      "Caption": "Function Name",
+      "Message": "Ask your question",
+      "Prompt": "small prompt",
+      "Default": "SomeDefault",
+      "Type": "TEXT"
+    },
+    "HELP": {
+      "Caption": "Asking Help",
+      "Message": "Ask your question",
+      "Prompt": "small prompt",
+      "Default": "Yes",
+      "Type": "YESNO",
+      "Choice": {
+        "Yes": "Select YES",
+        "No": "Select No"
+      }
+    },
+    "Param1": {
+      "Caption": "Parameter 1",
+      "Message": "Ask your question",
+      "Prompt": "small prompt",
+      "Default": "SomeDefault",
+      "Type": "TEXT"
+    },
+    "Param2": {
+      "Caption": "Parameter 2",
+      "Message": "Ask your question",
+      "Prompt": "small prompt",
+      "Default": "MayBe",
+      "Type": "CHOICE",
+      "Choice": {
+        "Yes": "Enable pester to perform testing",
+        "MayBe": "Skip pester testing",
+        "Whatever": "Enable pester to perform testing",
+        "No": "Skip pester testing"
+      }
+    },
+    "Content": {
+      "Caption": "Some Content",
+      "Message": "Ask your question",
+      "Prompt": "small prompt",
+      "Default": "SomeDefault",
+      "Type": "TEXT"
+    }
+  }
+}

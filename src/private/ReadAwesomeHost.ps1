@@ -17,7 +17,7 @@ function Read-AwesomeHost {
         }
     } 
     ## For Choice based
-    if ($Ask.Type -eq 'CHOICE') {
+    if ($Ask.Type -eq 'CHOICE' -or $Ask.Type -eq 'YESNO') {
         $Cs = @()
         $Ask.Choice.Keys | ForEach-Object {
             $Cs += New-Object System.Management.Automation.Host.ChoiceDescription "&$_", $($Ask.Choice.$_)

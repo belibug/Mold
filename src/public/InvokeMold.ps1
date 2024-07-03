@@ -1,6 +1,6 @@
 function Invoke-Mold {
     param (
-        $Path = 'C:\Localwork\Projects\Mold\sample\psfunc\mold.json'
+        $Path 
     )
     $data = Get-Content -Raw $Path | ConvertFrom-Json -AsHashtable
     $result = New-Object System.Collections.ArrayList
@@ -13,4 +13,3 @@ function Invoke-Mold {
     }
     return $result.ToArray()
 }
-Invoke-Mold
