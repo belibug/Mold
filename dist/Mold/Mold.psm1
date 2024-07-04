@@ -35,7 +35,11 @@ function Invoke-Mold {
         $q.Key = $_
         $result.add($q) | Out-Null
     }
-    $result
+
+    $DataForScriptRunning = @{}
+    $result | ForEach-Object {
+        $DataForScriptRunning.Add($_.Key, $_.Answer)
+    }
     # return $result.Toarray()
 
     # Create Content
@@ -43,7 +47,7 @@ function Invoke-Mold {
     ## Cleanup if folder exists
     if (Test-Path $locaTempFolder) { Remove-Item $locaTempFolder -Recurse -Force }
     New-Item -ItemType Directory -Path $locaTempFolder | Out-Null
-    Copy-Item -Path "$TemplatePath\*" -Destination "$locaTempFolder" -Recurse -Exclude 'MoldManifest.json'
+    Copy-Item -Path "$TemplatePath\*" -Destination "$locaTempFolder" -Recurse -Exclude ('MoldManifest.json', 'MOLD_SCRIPT.ps1')
 
     # Invoke-Item $locaTempFolder
     $allowedExtensions = $data.metadata.includeFileTypes -split ',' | ForEach-Object { ".$($_.Trim())" }
@@ -51,8 +55,6 @@ function Invoke-Mold {
     $allFilesInLocalTemp = Get-ChildItem -File -Recurse -Path $locaTempFolder | Where-Object {
         $_.Extension -in $allowedExtensions -or $_.BaseName -in $allowedFilenames
     }
-    #-or $_.BaseName -in $allowedFilenames
-    $allFilesInLocalTemp
     #TODO use dot net to speed up this process
     $allFilesInLocalTemp | ForEach-Object {
         try {
@@ -64,7 +66,6 @@ function Invoke-Mold {
 
         $result | Where-Object { $_.Type -ne 'BLOCK' } | ForEach-Object {
             $MOLDParam = '<% MOLD_{0}_{1} %>' -f $_.Type, $_.Key
-            $MOLDParam
             $EachFileContent = $EachFileContent -replace $MOLDParam, $_.Answer
         }
         
@@ -78,12 +79,23 @@ function Invoke-Mold {
                 $EachFileContent = $EachFileContent -replace "(?s)$BlockStart.*?$BlockEnd", $null
             }
         }
-        Out-File -FilePath $_ -InputObject $EachFileContent
+        Out-File -FilePath $_ -InputObject $EachFileContent 
     }
 
 
     # Copy changed files back to destination
-    Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force
+    try { 
+        Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force -ErrorAction Stop 
+    } catch {
+        $Error[0]
+        Write-Error 'Something went wrong while copying'
+    }
+
+    #region Script Runner
+    $MoldScriptFile = (Join-Path -Path $TemplatePath -ChildPath 'MOLD_SCRIPT.ps1' | Resolve-Path).Path
+    Invoke-MoldScriptFile -MoldData $DataForScriptRunning -ScriptPath $MoldScriptFile -DestinationPath $DestinationPath
+    
+    Write-Host 'All done'
 }
 function New-MoldManifest {
     [CmdletBinding()]
@@ -111,7 +123,7 @@ function New-MoldManifest {
         'title'              = 'New PowerShell Module'
         'description'        = 'Plaster template for creating the files for a PowerShell module.'
         'guid'               = New-Guid | ForEach-Object Guid
-        'includeFileTypes'   = 'ps1, txt, md, json'
+        'includeFileTypes'   = 'ps1, txt, md, json, xml, psm1, psd1'
         'includeLiteralFile' = 'config'
     }
 
@@ -209,7 +221,7 @@ function Get-MoldPlaceHolders {
         $Path
     )
 
-    $Files = Get-ChildItem -Path $Path -File -Recurse
+    $Files = Get-ChildItem -Path $Path -File -Recurse -Exclude 'MOLD_SCRIPT.ps1'
     $PlaceHolders = @()
     $Files | 
     Where-Object { $_.Length -lt 1MB } | #HACK, easy way to avoid reading large files which will slow down program
@@ -227,6 +239,28 @@ function Get-MoldPlaceHolders {
         $PlaceHolders += $ParamMatch | ForEach-Object { $_.Groups[1].Value }
     }
     return $PlaceHolders
+}
+function Invoke-MoldScriptFile {
+    param(
+        [hashtable]$MoldData,
+        [string]$ScriptPath,
+        [string]$DestinationPath
+    )
+    if (-not (Test-Path $MoldScriptFile)) {
+        Write-Verbose 'No MOLD_SCRIPT found in template directory, Ignoring script run'
+        return
+    }
+    Push-Location -StackName 'MoldScriptExecution'
+    if (-not (Test-Path $DestinationPath)) { 
+        Write-Error 'Destination path not accessible, unable to run MOLD_SCRIPT' -ErrorAction Stop
+    }
+    Set-Location $DestinationPath
+    Invoke-Command -ScriptBlock {
+        param([hashtable]$MoldData, [string]$scriptPath)
+        & $scriptPath -MoldData $MoldData 
+    } -ArgumentList $MoldData , $MoldScriptFile
+    if ($?) { Write-Warning 'MOLD_SCRIPT finished with errors' }
+    Pop-Location -StackName 'MoldScriptExecution'
 }
 function Read-AwesomeHost {
     [CmdletBinding()]

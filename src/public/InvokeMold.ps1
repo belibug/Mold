@@ -4,16 +4,13 @@ function Invoke-Mold {
         [Parameter(ParameterSetName = 'TemplatePath', Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]$TemplatePath,
-    
         #TODO pending implementation. Get Manifest by name
         [Parameter(ParameterSetName = 'Name', Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]$Name,
-
         [string]$DestinationPath = (Get-Location).Path,
-
         #TODO Provide input as answerfile
-        [string]$answerFile
+        [string]$AnswerFile
     )
     
     # Validate MoldTemplate
@@ -23,30 +20,33 @@ function Invoke-Mold {
     $data = Get-Content -Raw $MoldManifest | ConvertFrom-Json -AsHashtable
     $result = New-Object System.Collections.arrayList
 
+    #region Get Answers interactively
     $data.parameters.Keys | ForEach-Object {
         $q = [MoldQ]::new($data.parameters.$_)
         $q.answer = Read-awesomeHost $q
         $q.Key = $_
         $result.add($q) | Out-Null
     }
-    $result
-    # return $result.Toarray()
 
-    # Create Content
+    $DataForScriptRunning = @{}
+    $result | ForEach-Object {
+        $DataForScriptRunning.Add($_.Key, $_.Answer)
+    }
+    #endregion
+
+    #region Placeholder Subtitution
     $locaTempFolder = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), $data.metadata.name)
-    ## Cleanup if folder exists
+    # Cleanup if folder exists
     if (Test-Path $locaTempFolder) { Remove-Item $locaTempFolder -Recurse -Force }
     New-Item -ItemType Directory -Path $locaTempFolder | Out-Null
-    Copy-Item -Path "$TemplatePath\*" -Destination "$locaTempFolder" -Recurse -Exclude 'MoldManifest.json'
+    Copy-Item -Path "$TemplatePath\*" -Destination "$locaTempFolder" -Recurse -Exclude ('MoldManifest.json', 'MOLD_SCRIPT.ps1')
 
-    # Invoke-Item $locaTempFolder
     $allowedExtensions = $data.metadata.includeFileTypes -split ',' | ForEach-Object { ".$($_.Trim())" }
     $allowedFilenames = $data.metadata.includeLiteralFile -split ',' | ForEach-Object { $_.Trim() }
     $allFilesInLocalTemp = Get-ChildItem -File -Recurse -Path $locaTempFolder | Where-Object {
         $_.Extension -in $allowedExtensions -or $_.BaseName -in $allowedFilenames
     }
-    #-or $_.BaseName -in $allowedFilenames
-    $allFilesInLocalTemp
+
     #TODO use dot net to speed up this process
     $allFilesInLocalTemp | ForEach-Object {
         try {
@@ -58,7 +58,6 @@ function Invoke-Mold {
 
         $result | Where-Object { $_.Type -ne 'BLOCK' } | ForEach-Object {
             $MOLDParam = '<% MOLD_{0}_{1} %>' -f $_.Type, $_.Key
-            $MOLDParam
             $EachFileContent = $EachFileContent -replace $MOLDParam, $_.Answer
         }
         
@@ -72,10 +71,20 @@ function Invoke-Mold {
                 $EachFileContent = $EachFileContent -replace "(?s)$BlockStart.*?$BlockEnd", $null
             }
         }
-        Out-File -FilePath $_ -InputObject $EachFileContent
+        Out-File -FilePath $_ -InputObject $EachFileContent 
     }
 
+    # Copy all files to destination
+    try { 
+        Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force -ErrorAction Stop 
+    } catch {
+        $Error[0]
+        Write-Error 'Something went wrong while copying'
+    }
+    #endregion
 
-    # Copy changed files back to destination
-    Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force
+    #region Script Runner
+    $MoldScriptFile = (Join-Path -Path $TemplatePath -ChildPath 'MOLD_SCRIPT.ps1' | Resolve-Path).Path
+    Invoke-MoldScriptFile -MoldData $DataForScriptRunning -ScriptPath $MoldScriptFile -DestinationPath $DestinationPath
+    #endregion
 }

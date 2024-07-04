@@ -1,0 +1,1 @@
+<% MOLD_TEXT_SimpleName %>

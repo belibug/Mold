@@ -5,7 +5,7 @@ function Get-MoldPlaceHolders {
         $Path
     )
 
-    $Files = Get-ChildItem -Path $Path -File -Recurse
+    $Files = Get-ChildItem -Path $Path -File -Recurse -Exclude 'MOLD_SCRIPT.ps1'
     $PlaceHolders = @()
     $Files | 
     Where-Object { $_.Length -lt 1MB } | #HACK, easy way to avoid reading large files which will slow down program
