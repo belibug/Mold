@@ -24,7 +24,7 @@ function New-MoldManifest {
         'title'              = 'New PowerShell Module'
         'description'        = 'Plaster template for creating the files for a PowerShell module.'
         'guid'               = New-Guid | ForEach-Object Guid
-        'includeFileTypes'   = 'ps1, txt, md, json'
+        'includeFileTypes'   = 'ps1, txt, md, json, xml, psm1, psd1'
         'includeLiteralFile' = 'config'
     }
 
