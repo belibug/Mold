@@ -1,9 +1,9 @@
-<% MOLD_YESNO_HELP_START %>
+<% MOLD_SHOW_HELP_Start %>
 <#
 .SYNPOSIS
 It works
 #>
-<% MOLD_YESNO_HELP_END %>
+<% MOLD_SHOW_HELP_End %>
 function <% MOLD_TEXT_FuncName %> {
     [CmdletBinding()]
     param (

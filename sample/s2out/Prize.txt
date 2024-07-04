@@ -1,9 +1,9 @@
-Dear <% MOLD_TEXT_OurBelovedStudent %>
+Dear yessir
 
-You have passed : <% MOLD_YESNO_No %>
+You have passed : No
 
 Thank you,
-Default <% MOLD_CHOICE_Default %>
+Professor Default
 
-This is from Default <% MOLD_CHOICE_Director %> who is also working full time for us.
+This is from professor <% MOLD_CHOICE_Director %> who is also working full time for us.
 

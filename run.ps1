@@ -1,6 +1,6 @@
 Import-Module ./dist/Mold
-$Project = 'C:\Localwork\Projects\Mold\sample\examrecord'
-$ProjectOut = 'C:\Localwork\Projects\Mold\sample\s2out'
+$Project = '.\sample\examrecord'
+$ProjectOut = '.\sample\s2out'
 # Remove-Item -Path "$Project\MoldManifest.json" -Force -ErrorAction SilentlyContinue
 
 

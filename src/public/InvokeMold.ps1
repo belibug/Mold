@@ -38,14 +38,16 @@ function Invoke-Mold {
     New-Item -ItemType Directory -Path $locaTempFolder | Out-Null
     Copy-Item -Path "$TemplatePath\*" -Destination "$locaTempFolder" -Recurse -Exclude 'MoldManifest.json'
 
-    Invoke-Item $locaTempFolder
+    # Invoke-Item $locaTempFolder
 
     $allFilesInLocalTemp = Get-ChildItem -File -Recurse -Path $locaTempFolder
     #TODO use dot net to speed up this process
     $allFilesInLocalTemp | ForEach-Object {
         $FContent = Get-Content $_ -Raw
         $result | ForEach-Object {
-            $FContent = $FContent -replace $_.Key, $_.answer
+            $MOLDParam = '<% MOLD_{0}_{1} %>' -f $_.Type, $_.Key
+            $MOLDParam
+            $FContent = $FContent -replace $MOLDParam, $_.answer
         }
         Out-File -FilePath $_ -InputObject $FContent
     }
