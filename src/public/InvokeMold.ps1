@@ -29,6 +29,7 @@ function Invoke-Mold {
         $q.Key = $_
         $result.add($q) | Out-Null
     }
+    $result
     # return $result.Toarray()
 
     # Create Content
@@ -39,17 +40,39 @@ function Invoke-Mold {
     Copy-Item -Path "$TemplatePath\*" -Destination "$locaTempFolder" -Recurse -Exclude 'MoldManifest.json'
 
     # Invoke-Item $locaTempFolder
-
-    $allFilesInLocalTemp = Get-ChildItem -File -Recurse -Path $locaTempFolder
+    $allowedExtensions = $data.metadata.includeFileTypes -split ',' | ForEach-Object { ".$($_.Trim())" }
+    $allowedFilenames = $data.metadata.includeLiteralFile -split ',' | ForEach-Object { $_.Trim() }
+    $allFilesInLocalTemp = Get-ChildItem -File -Recurse -Path $locaTempFolder | Where-Object {
+        $_.Extension -in $allowedExtensions -or $_.BaseName -in $allowedFilenames
+    }
+    #-or $_.BaseName -in $allowedFilenames
+    $allFilesInLocalTemp
     #TODO use dot net to speed up this process
     $allFilesInLocalTemp | ForEach-Object {
-        $FContent = Get-Content $_ -Raw
-        $result | ForEach-Object {
+        try {
+            # process only text that is in UTF8 encoding
+            $EachFileContent = Get-Content $_ -Raw -Encoding 'UTF8' -ErrorAction Stop
+        } catch {
+            break
+        }
+
+        $result | Where-Object { $_.Type -ne 'BLOCK' } | ForEach-Object {
             $MOLDParam = '<% MOLD_{0}_{1} %>' -f $_.Type, $_.Key
             $MOLDParam
-            $FContent = $FContent -replace $MOLDParam, $_.answer
+            $EachFileContent = $EachFileContent -replace $MOLDParam, $_.Answer
         }
-        Out-File -FilePath $_ -InputObject $FContent
+        
+        $result | Where-Object { $_.Type -eq 'BLOCK' } | ForEach-Object {
+            $BlockStart = '<% MOLD_{0}_{1}_{2} %>' -f $_.Type, $_.Key, 'START'
+            $BlockEnd = '<% MOLD_{0}_{1}_{2} %>' -f $_.Type, $_.Key, 'END'
+            if ($_.Answer -eq 'Yes') {
+                $EachFileContent = $EachFileContent -replace $BlockStart, $null
+                $EachFileContent = $EachFileContent -replace $BlockEnd, $null
+            } else {
+                $EachFileContent = $EachFileContent -replace "(?s)$BlockStart.*?$BlockEnd", $null
+            }
+        }
+        Out-File -FilePath $_ -InputObject $EachFileContent
     }
 
 

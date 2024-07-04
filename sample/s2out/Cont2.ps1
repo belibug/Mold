@@ -1,8 +1,5 @@
-<% MOLD_BLOCK_HELP_Start %><#
-.SYNPOSIS
-It works
-#><% MOLD_BLOCK_HELP_End %>
-function <% MOLD_TEXT_FuncName %> {
+
+function a {
     [CmdletBinding()]
     param (
         <% sMOLD_TEXT_Param1 %>

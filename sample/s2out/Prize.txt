@@ -1,9 +1,0 @@
-Dear yessir
-
-You have passed : No
-
-Thank you,
-Professor Default
-
-This is from professor <% MOLD_CHOICE_Director %> who is also working full time for us.
-

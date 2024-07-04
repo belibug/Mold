@@ -4,67 +4,28 @@
     "version": "0.2.0",
     "title": "New PowerShell Module",
     "description": "Plaster template for creating the files for a PowerShell module.",
-    "guid": "76faa849-319c-4b3f-811b-fbc050f7fb50"
+    "guid": "ef00881e-19d4-447b-8105-eb94b51e9a58",
+    "includeFileTypes": "ps1, txt, md, json",
+    "includeLiteralFile": "config, some"
   },
   "parameters": {
     "HELP": {
-      "Caption": "Title caption",
-      "Message": "Ask your question",
-      "Prompt": "small prompt",
-      "Default": "SomeDefault",
-      "Type": "YESNO",
+      "Caption": "HELP",
+      "Message": "Do you want to include?",
+      "Prompt": "Response",
+      "Type": "BLOCK",
+      "Default": "No",
       "Choice": {
-        "Yes": "Select YES",
-        "No": "Select No"
+        "Yes": "Block text between Start and END will be included",
+        "No": "Block text will be removed"
       }
     },
     "FuncName": {
-      "Caption": "Title caption",
+      "Caption": "FuncName",
       "Message": "Ask your question",
-      "Prompt": "small prompt",
-      "Default": "SomeDefault",
-      "Type": "TEXT"
-    },
-    "Param1": {
-      "Caption": "Title caption",
-      "Message": "Ask your question",
-      "Prompt": "small prompt",
-      "Default": "SomeDefault",
-      "Type": "TEXT"
-    },
-    "Param2": {
-      "Caption": "Title caption",
-      "Message": "Ask your question",
-      "Prompt": "small prompt",
-      "Default": "SomeDefault",
-      "Type": "CHOICE",
-      "Choice": {
-        "Yes": "Enable pester to perform testing",
-        "MayBe": "Skip pester testing",
-        "Whatever": "Enable pester to perform testing",
-        "No": "Skip pester testing"
-      }
-    },
-    "Content": {
-      "Caption": "Title caption",
-      "Message": "Ask your question",
-      "Prompt": "small prompt",
-      "Default": "SomeDefault",
-      "Type": "TEXT"
-    },
-    "FineDude": {
-      "Caption": "Title caption",
-      "Message": "Ask your question",
-      "Prompt": "small prompt",
-      "Default": "SomeDefault",
-      "Type": "TEXT"
-    },
-    "InsideXML": {
-      "Caption": "Title caption",
-      "Message": "Ask your question",
-      "Prompt": "small prompt",
-      "Default": "SomeDefault",
-      "Type": "TEXT"
+      "Prompt": "Response",
+      "Type": "TEXT",
+      "Default": ""
     }
   }
 }

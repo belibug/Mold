@@ -3,16 +3,16 @@ function GenerateQuestion {
         [string]$MoldVariable
     )
     Write-Verbose "Working on MoldVariable $MoldVariable"
-    if ($MoldVariable -match '^YESNO_.+$') {
+    if ($MoldVariable -match '^BLOCK_.+$') {
         $question = [ordered]@{
             'Caption' = $MoldVariable.Split('_')[1]
-            'Message' = 'Ask your question'
+            'Message' = 'Do you want to include?'
             'Prompt'  = 'Response'
-            'Type'    = 'YESNO'
+            'Type'    = 'BLOCK'
             'Default' = 'No'
             'Choice'  = [ordered]@{
-                'Yes' = 'Select Yes'
-                'No'  = 'Select No'
+                'Yes' = 'Block text between Start and END will be included'
+                'No'  = 'Block text will be removed'
             }
         }
     }

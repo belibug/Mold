@@ -35,6 +35,7 @@ function Invoke-Mold {
         $q.Key = $_
         $result.add($q) | Out-Null
     }
+    $result
     # return $result.Toarray()
 
     # Create Content
@@ -45,17 +46,39 @@ function Invoke-Mold {
     Copy-Item -Path "$TemplatePath\*" -Destination "$locaTempFolder" -Recurse -Exclude 'MoldManifest.json'
 
     # Invoke-Item $locaTempFolder
-
-    $allFilesInLocalTemp = Get-ChildItem -File -Recurse -Path $locaTempFolder
+    $allowedExtensions = $data.metadata.includeFileTypes -split ',' | ForEach-Object { ".$($_.Trim())" }
+    $allowedFilenames = $data.metadata.includeLiteralFile -split ',' | ForEach-Object { $_.Trim() }
+    $allFilesInLocalTemp = Get-ChildItem -File -Recurse -Path $locaTempFolder | Where-Object {
+        $_.Extension -in $allowedExtensions -or $_.BaseName -in $allowedFilenames
+    }
+    #-or $_.BaseName -in $allowedFilenames
+    $allFilesInLocalTemp
     #TODO use dot net to speed up this process
     $allFilesInLocalTemp | ForEach-Object {
-        $FContent = Get-Content $_ -Raw
-        $result | ForEach-Object {
+        try {
+            # process only text that is in UTF8 encoding
+            $EachFileContent = Get-Content $_ -Raw -Encoding 'UTF8' -ErrorAction Stop
+        } catch {
+            break
+        }
+
+        $result | Where-Object { $_.Type -ne 'BLOCK' } | ForEach-Object {
             $MOLDParam = '<% MOLD_{0}_{1} %>' -f $_.Type, $_.Key
             $MOLDParam
-            $FContent = $FContent -replace $MOLDParam, $_.answer
+            $EachFileContent = $EachFileContent -replace $MOLDParam, $_.Answer
         }
-        Out-File -FilePath $_ -InputObject $FContent
+        
+        $result | Where-Object { $_.Type -eq 'BLOCK' } | ForEach-Object {
+            $BlockStart = '<% MOLD_{0}_{1}_{2} %>' -f $_.Type, $_.Key, 'START'
+            $BlockEnd = '<% MOLD_{0}_{1}_{2} %>' -f $_.Type, $_.Key, 'END'
+            if ($_.Answer -eq 'Yes') {
+                $EachFileContent = $EachFileContent -replace $BlockStart, $null
+                $EachFileContent = $EachFileContent -replace $BlockEnd, $null
+            } else {
+                $EachFileContent = $EachFileContent -replace "(?s)$BlockStart.*?$BlockEnd", $null
+            }
+        }
+        Out-File -FilePath $_ -InputObject $EachFileContent
     }
 
 
@@ -83,11 +106,13 @@ function New-MoldManifest {
     }
 
     $metadata = [ordered]@{
-        'name'        = 'NewPowerShellModule'
-        'version'     = '0.2.0'
-        'title'       = 'New PowerShell Module'
-        'description' = 'Plaster template for creating the files for a PowerShell module.'
-        'guid'        = New-Guid | ForEach-Object Guid
+        'name'               = 'NewPowerShellModule'
+        'version'            = '0.2.0'
+        'title'              = 'New PowerShell Module'
+        'description'        = 'Plaster template for creating the files for a PowerShell module.'
+        'guid'               = New-Guid | ForEach-Object Guid
+        'includeFileTypes'   = 'ps1, txt, md, json'
+        'includeLiteralFile' = 'config'
     }
 
     $data = [ordered]@{
@@ -138,16 +163,16 @@ function GenerateQuestion {
         [string]$MoldVariable
     )
     Write-Verbose "Working on MoldVariable $MoldVariable"
-    if ($MoldVariable -match '^YESNO_.+$') {
+    if ($MoldVariable -match '^BLOCK_.+$') {
         $question = [ordered]@{
             'Caption' = $MoldVariable.Split('_')[1]
-            'Message' = 'Ask your question'
+            'Message' = 'Do you want to include?'
             'Prompt'  = 'Response'
-            'Type'    = 'YESNO'
+            'Type'    = 'BLOCK'
             'Default' = 'No'
             'Choice'  = [ordered]@{
-                'Yes' = 'Select Yes'
-                'No'  = 'Select No'
+                'Yes' = 'Block text between Start and END will be included'
+                'No'  = 'Block text will be removed'
             }
         }
     }
@@ -186,12 +211,19 @@ function Get-MoldPlaceHolders {
 
     $Files = Get-ChildItem -Path $Path -File -Recurse
     $PlaceHolders = @()
-    $Files | ForEach-Object {
+    $Files | 
+    Where-Object { $_.Length -lt 1MB } | #HACK, easy way to avoid reading large files which will slow down program
+    ForEach-Object {
         Write-Verbose "Processing File $_"
-        $FileContent = Get-Content -Raw $_
-        $pattern = '<% MOLD_([^%]+) %>'
-        if ([string]::IsNullOrEmpty($FileContent)) { break }
-        $ParamMatch = [regex]::matches($FileContent, $pattern)
+        try {
+            $FileContent = Get-Content -Raw $_ -ErrorAction Stop -Encoding utf8
+            $pattern = '<% MOLD_([^%]+) %>'
+            if (-not $FileContent) { return }
+            $ParamMatch = [regex]::matches($FileContent, $pattern)
+        } catch {
+            Write-Verbose "Skipping, failed to read $_"
+            return
+        }
         $PlaceHolders += $ParamMatch | ForEach-Object { $_.Groups[1].Value }
     }
     return $PlaceHolders
@@ -215,7 +247,7 @@ function Read-AwesomeHost {
         }
     } 
     ## For Choice based
-    if ($Ask.Type -eq 'CHOICE' -or $Ask.Type -eq 'YESNO') {
+    if ($Ask.Type -eq 'CHOICE' -or $Ask.Type -eq 'BLOCK') {
         $Cs = @()
         $Ask.Choice.Keys | ForEach-Object {
             $Cs += New-Object System.Management.Automation.Host.ChoiceDescription "&$_", $($Ask.Choice.$_)

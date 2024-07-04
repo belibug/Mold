@@ -1,1 +1,0 @@
-<% MOLD_TEXT_FineDude %>

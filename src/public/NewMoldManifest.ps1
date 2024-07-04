@@ -19,11 +19,13 @@ function New-MoldManifest {
     }
 
     $metadata = [ordered]@{
-        'name'        = 'NewPowerShellModule'
-        'version'     = '0.2.0'
-        'title'       = 'New PowerShell Module'
-        'description' = 'Plaster template for creating the files for a PowerShell module.'
-        'guid'        = New-Guid | ForEach-Object Guid
+        'name'               = 'NewPowerShellModule'
+        'version'            = '0.2.0'
+        'title'              = 'New PowerShell Module'
+        'description'        = 'Plaster template for creating the files for a PowerShell module.'
+        'guid'               = New-Guid | ForEach-Object Guid
+        'includeFileTypes'   = 'ps1, txt, md, json'
+        'includeLiteralFile' = 'config'
     }
 
     $data = [ordered]@{
