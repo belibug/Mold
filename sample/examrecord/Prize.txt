@@ -1,0 +1,8 @@
+Dear <% MOLD_TEXT_StudentName %>
+
+You have passed : <% MOLD_YESNO_PassOrFail %>
+
+Thank you,
+Professor <% MOLD_CHOICE_Professor %>
+
+This is from professor <% MOLD_CHOICE_Director %> who is also working full time for us.

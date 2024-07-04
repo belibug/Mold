@@ -1,0 +1,8 @@
+Dear <% MOLD_TEXT_a %>,
+
+Hope you are doing well! 
+
+No : <% MOLD_YESNO_No %>
+
+Thank you,
+<% MOLD_TEXT_b %>

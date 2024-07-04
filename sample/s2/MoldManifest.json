@@ -4,7 +4,7 @@
     "version": "0.2.0",
     "title": "New PowerShell Module",
     "description": "Plaster template for creating the files for a PowerShell module.",
-    "guid": "7dd902f8-da89-4160-8708-2311761b6713"
+    "guid": "5227bb8b-8ae0-4524-8fe6-b8ea206d8a4f"
   },
   "parameters": {
     "StudentName": {
