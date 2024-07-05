@@ -138,8 +138,6 @@ function New-MoldManifest {
         $parameters.$($_.Split('_')[1]) = GenerateQuestion $_
     }
 
-    $MetaResult
-
     $metadata = [ordered]@{
         'name'               = $MetaResult.ShortName
         'version'            = '0.0.1'

@@ -20,6 +20,13 @@ MOLD utilizes a simple <% MOLD_TYPE_Variable %>,
 
 This solution is developed from scratch to meet specific requirements. It is designed as an array that can be easily converted into a PowerShell hashtable for convenient consumption and manipulation.
 
+## Local Templates and Templates repository
+
+1. PSData extension in psd1: This follows same logic as Plaster and makes it easy for other PowerShell module to ship templates with module
+2. Local Folder : You can directly point at local template folder to choose local template
+3. Auto Scan Directory : This is if you want to save certain local path as local template source and call them by ShortNames. MOLD will look for "MOLD_TEMPLATES" env variable which can store ";" separated directories with templates.
+Eg MOLD_TEMPLATES content `/Some/Path;/SomeOther/Path` just like `PATH` environment variable
+
 ## File Operations and Complex Logic
 
 MOLD does not handle file renaming, command execution, or complex directory/file arrangements. It is a command-line tool designed to prompt users for input, copy pre-defined content, and perform variable substitution.

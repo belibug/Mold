@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "name": "abc",
+    "name": "powermodule",
     "version": "0.0.1",
-    "title": "a",
+    "title": "Template for new powershell module",
     "description": "MOLD Template",
-    "guid": "198bbcc2-8ff0-42e0-b60c-5ddde1071967",
+    "guid": "398e3180-8016-4d4a-a62d-fba726cb4334",
     "includeFileTypes": "ps1, txt, md, json, xml, psm1, psd1",
     "includeLiteralFile": "config"
   },
