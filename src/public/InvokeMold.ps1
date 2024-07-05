@@ -75,7 +75,7 @@ function Invoke-Mold {
         Out-File -FilePath $_ -InputObject $EachFileContent 
     }
 
-    if (Test-Path $DestinationPath -PathType Container) {
+    if (-not (Test-Path $DestinationPath -PathType Container)) {
         New-Item -Path $DestinationPath -ItemType Directory -Force
     }
     # Copy all files to destination
