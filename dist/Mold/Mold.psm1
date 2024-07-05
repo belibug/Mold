@@ -87,7 +87,7 @@ function Invoke-Mold {
         Out-File -FilePath $_ -InputObject $EachFileContent 
     }
 
-    if (Test-Path $DestinationPath -PathType Container) {
+    if (-not (Test-Path $DestinationPath -PathType Container)) {
         New-Item -Path $DestinationPath -ItemType Directory -Force
     }
     # Copy all files to destination
@@ -121,17 +121,30 @@ function New-MoldManifest {
     ## Find Parameters
     $PlaceHolders = Get-MoldPlaceHolders -Path $Path
    
+    $MetaQuestions = Get-Content -Raw "$PSScriptRoot\resources\NewMoldQuestions.json" | ConvertFrom-Json -AsHashtable
+    $MetaResult = @{}
+
+    #region Get Answers interactively
+    $MetaQuestions.parameters.Keys | ForEach-Object {
+        $q = [MoldQ]::new($MetaQuestions.parameters.$_)
+        $q.answer = Read-awesomeHost $q
+        $q.Key = $_
+        $MetaResult.add($q.Key, $q.answer) | Out-Null
+    }
+
     # Process Parameters
     $parameters = [ordered]@{}
     $placeholders | ForEach-Object {
         $parameters.$($_.Split('_')[1]) = GenerateQuestion $_
     }
 
+    $MetaResult
+
     $metadata = [ordered]@{
-        'name'               = 'NewPowerShellModule'
-        'version'            = '0.2.0'
-        'title'              = 'New PowerShell Module'
-        'description'        = 'Plaster template for creating the files for a PowerShell module.'
+        'name'               = $MetaResult.ShortName
+        'version'            = '0.0.1'
+        'title'              = $MetaResult.Title
+        'description'        = 'MOLD Template'
         'guid'               = New-Guid | ForEach-Object Guid
         'includeFileTypes'   = 'ps1, txt, md, json, xml, psm1, psd1'
         'includeLiteralFile' = 'config'

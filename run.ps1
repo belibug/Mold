@@ -2,7 +2,7 @@ Import-Module ./dist/Mold
 $Project = '.\sample\t1'
 $ProjectOut = '.\sample\out'
 $Build = $true
-$Build = $false
+# $Build = $false
 
 if ($Build) {
     Get-ChildItem $ProjectOut -Recurse | Remove-Item -Force

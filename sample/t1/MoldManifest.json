@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "name": "NewPowerShellModule",
-    "version": "0.2.0",
-    "title": "New PowerShell Module",
-    "description": "Plaster template for creating the files for a PowerShell module.",
-    "guid": "72c14079-3ae7-4cb5-81fd-8fbd04319448",
+    "name": "abc",
+    "version": "0.0.1",
+    "title": "a",
+    "description": "MOLD Template",
+    "guid": "198bbcc2-8ff0-42e0-b60c-5ddde1071967",
     "includeFileTypes": "ps1, txt, md, json, xml, psm1, psd1",
     "includeLiteralFile": "config"
   },
@@ -15,17 +15,6 @@
       "Prompt": "Response",
       "Type": "TEXT",
       "Default": ""
-    },
-    "ForBlock": {
-      "Caption": "ForBlock",
-      "Message": "Do you want to include?",
-      "Prompt": "Response",
-      "Type": "BLOCK",
-      "Default": "No",
-      "Choice": {
-        "Yes": "Block text between Start and END will be included",
-        "No": "Block text will be removed"
-      }
     },
     "ForChoice": {
       "Caption": "ForChoice",
@@ -38,6 +27,17 @@
         "Two": "Selecting Two",
         "Three": "Selecting Three",
         "Default": "Selecting Default"
+      }
+    },
+    "ForBlock": {
+      "Caption": "ForBlock",
+      "Message": "Do you want to include?",
+      "Prompt": "Response",
+      "Type": "BLOCK",
+      "Default": "No",
+      "Choice": {
+        "Yes": "Block text between Start and END will be included",
+        "No": "Block text will be removed"
       }
     }
   }
