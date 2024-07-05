@@ -11,6 +11,26 @@
   "parameters": {
     "ForText": {
       "Caption": "ForText",
+      "Message": "Ask your question",
+      "Prompt": "Response",
+      "Type": "TEXT",
+      "Default": ""
+    },
+    "ForChoice": {
+      "Caption": "ForChoice",
+      "Message": "Choose One",
+      "Prompt": "Response",
+      "Type": "CHOICE",
+      "Default": "Default",
+      "Choice": {
+        "One": "Selecting one",
+        "Two": "Selecting Two",
+        "Three": "Selecting Three",
+        "Default": "Selecting Default"
+      }
+    },
+    "ForBlock": {
+      "Caption": "ForBlock",
       "Message": "Do you want to include?",
       "Prompt": "Response",
       "Type": "BLOCK",
