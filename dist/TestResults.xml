@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="25" errors="0" failures="7" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2024-07-05" time="12:37:41">
+  <environment clr-version="8.0.6" machine-name="W10L-013241" platform="Microsoft Windows 11 Enterprise|C:\WINDOWS|\Device\Harddisk0\Partition3" os-version="10.0.22631" user="HA0559" user-domain="CORP" cwd="C:\Localwork\Projects\Mold" nunit-version="2.5.8.0" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Failure" success="False" time="2.914" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="C:\Localwork\Projects\Mold\tests\Module.Tests.ps1" executed="True" result="Success" success="True" time="0.4773" asserts="0" description="C:\Localwork\Projects\Mold\tests\Module.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="General Module Control" executed="True" result="Success" success="True" time="0.1524" asserts="0" description="General Module Control">
+            <results>
+              <test-case description="Should import without errors" name="General Module Control.Should import without errors" time="0.1118" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1" executed="True" result="Failure" success="False" time="2.4306" asserts="0" description="C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="File: Class_MOLDQ" executed="True" result="Success" success="True" time="0.1769" asserts="0" description="File: Class_MOLDQ">
+            <results>
+              <test-suite type="TestFixture" name="File: Class_MOLDQ.Code Quality Check" executed="True" result="Success" success="True" time="0.1678" asserts="0" description="File: Class_MOLDQ.Code Quality Check">
+                <results>
+                  <test-case description="is valid PowerShell Code" name="File: Class_MOLDQ.Code Quality Check.is valid PowerShell Code" time="0.0235" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="passess ScriptAnalyzer" name="File: Class_MOLDQ.Code Quality Check.passess ScriptAnalyzer" time="0.14" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="File: GenerateQuetion" executed="True" result="Success" success="True" time="0.3625" asserts="0" description="File: GenerateQuetion">
+            <results>
+              <test-suite type="TestFixture" name="File: GenerateQuetion.Code Quality Check" executed="True" result="Success" success="True" time="0.1791" asserts="0" description="File: GenerateQuetion.Code Quality Check">
+                <results>
+                  <test-case description="is valid PowerShell Code" name="File: GenerateQuetion.Code Quality Check.is valid PowerShell Code" time="0.013" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="passess ScriptAnalyzer" name="File: GenerateQuetion.Code Quality Check.passess ScriptAnalyzer" time="0.1623" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="File: GetMoldPlaceHolders" executed="True" result="Failure" success="False" time="0.6271" asserts="0" description="File: GetMoldPlaceHolders">
+            <results>
+              <test-suite type="TestFixture" name="File: GetMoldPlaceHolders.Code Quality Check" executed="True" result="Failure" success="False" time="0.2605" asserts="0" description="File: GetMoldPlaceHolders.Code Quality Check">
+                <results>
+                  <test-case description="is valid PowerShell Code" name="File: GetMoldPlaceHolders.Code Quality Check.is valid PowerShell Code" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="passess ScriptAnalyzer" name="File: GetMoldPlaceHolders.Code Quality Check.passess ScriptAnalyzer" time="0.2526" asserts="0" success="False" result="Failure" executed="True">
+                    <failure>
+                      <message>Expected $null or empty, because The cmdlet 'Get-MoldPlaceHolders' uses a plural noun. A singular noun should be used instead., but got The cmdlet 'Get-MoldPlaceHolders' uses a plural noun. A singular noun should be used instead..</message>
+                      <stack-trace>at $saResults | Should -BeNullOrEmpty -Because $($saResults.Message -join ';'), C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21
+at &lt;ScriptBlock&gt;, C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21</stack-trace>
+                    </failure>
+                  </test-case>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="File: InvokeMoldScript" executed="True" result="Failure" success="False" time="0.6674" asserts="0" description="File: InvokeMoldScript">
+            <results>
+              <test-suite type="TestFixture" name="File: InvokeMoldScript.Code Quality Check" executed="True" result="Failure" success="False" time="0.0368" asserts="0" description="File: InvokeMoldScript.Code Quality Check">
+                <results>
+                  <test-case description="is valid PowerShell Code" name="File: InvokeMoldScript.Code Quality Check.is valid PowerShell Code" time="0.0116" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="passess ScriptAnalyzer" name="File: InvokeMoldScript.Code Quality Check.passess ScriptAnalyzer" time="0.0204" asserts="0" success="False" result="Failure" executed="True">
+                    <failure>
+                      <message>Expected $null or empty, because The parameter 'ScriptPath' has been declared but not used., but got The parameter 'ScriptPath' has been declared but not used. .</message>
+                      <stack-trace>at $saResults | Should -BeNullOrEmpty -Because $($saResults.Message -join ';'), C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21
+at &lt;ScriptBlock&gt;, C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21</stack-trace>
+                    </failure>
+                  </test-case>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="File: ReadAwesomeHost" executed="True" result="Success" success="True" time="0.983" asserts="0" description="File: ReadAwesomeHost">
+            <results>
+              <test-suite type="TestFixture" name="File: ReadAwesomeHost.Code Quality Check" executed="True" result="Success" success="True" time="0.3125" asserts="0" description="File: ReadAwesomeHost.Code Quality Check">
+                <results>
+                  <test-case description="is valid PowerShell Code" name="File: ReadAwesomeHost.Code Quality Check.is valid PowerShell Code" time="0.0085" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="passess ScriptAnalyzer" name="File: ReadAwesomeHost.Code Quality Check.passess ScriptAnalyzer" time="0.3008" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="File: TestMoldHealth" executed="True" result="Success" success="True" time="1.0133" asserts="0" description="File: TestMoldHealth">
+            <results>
+              <test-suite type="TestFixture" name="File: TestMoldHealth.Code Quality Check" executed="True" result="Success" success="True" time="0.0253" asserts="0" description="File: TestMoldHealth.Code Quality Check">
+                <results>
+                  <test-case description="is valid PowerShell Code" name="File: TestMoldHealth.Code Quality Check.is valid PowerShell Code" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="passess ScriptAnalyzer" name="File: TestMoldHealth.Code Quality Check.passess ScriptAnalyzer" time="0.0132" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="File: TestMoldStatus" executed="True" result="Success" success="True" time="1.0452" asserts="0" description="File: TestMoldStatus">
+            <results>
+              <test-suite type="TestFixture" name="File: TestMoldStatus.Code Quality Check" executed="True" result="Success" success="True" time="0.0268" asserts="0" description="File: TestMoldStatus.Code Quality Check">
+                <results>
+                  <test-case description="is valid PowerShell Code" name="File: TestMoldStatus.Code Quality Check.is valid PowerShell Code" time="0.0122" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="passess ScriptAnalyzer" name="File: TestMoldStatus.Code Quality Check.passess ScriptAnalyzer" time="0.0093" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="File: GetMoldTemplate" executed="True" result="Failure" success="False" time="1.0938" asserts="0" description="File: GetMoldTemplate">
+            <results>
+              <test-suite type="TestFixture" name="File: GetMoldTemplate.Code Quality Check" executed="True" result="Failure" success="False" time="0.0446" asserts="0" description="File: GetMoldTemplate.Code Quality Check">
+                <results>
+                  <test-case description="is valid PowerShell Code" name="File: GetMoldTemplate.Code Quality Check.is valid PowerShell Code" time="0.0075" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="passess ScriptAnalyzer" name="File: GetMoldTemplate.Code Quality Check.passess ScriptAnalyzer" time="0.0317" asserts="0" success="False" result="Failure" executed="True">
+                    <failure>
+                      <message>Expected $null or empty, because The parameter 'IncludeInstalledModules' has been declared but not used. ;The parameter 'ListAvailable' has been declared but not used. ;The parameter 'Name' has been declared but not used. ;The parameter 'TemplatePath' has been declared but not used. ;The parameter 'Recurse' has been declared but not used., but got @(The parameter 'IncludeInstalledModules' has been declared but not used. , The parameter 'ListAvailable' has been declared but not used. , The parameter 'Name' has been declared but not used. , The parameter 'TemplatePath' has been declared but not used. , The parameter 'Recurse' has been declared but not used. ).</message>
+                      <stack-trace>at $saResults | Should -BeNullOrEmpty -Because $($saResults.Message -join ';'), C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21
+at &lt;ScriptBlock&gt;, C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21</stack-trace>
+                    </failure>
+                  </test-case>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="File: InvokeMold" executed="True" result="Failure" success="False" time="1.8495" asserts="0" description="File: InvokeMold">
+            <results>
+              <test-suite type="TestFixture" name="File: InvokeMold.Code Quality Check" executed="True" result="Failure" success="False" time="0.7505" asserts="0" description="File: InvokeMold.Code Quality Check">
+                <results>
+                  <test-case description="is valid PowerShell Code" name="File: InvokeMold.Code Quality Check.is valid PowerShell Code" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="passess ScriptAnalyzer" name="File: InvokeMold.Code Quality Check.passess ScriptAnalyzer" time="0.7412" asserts="0" success="False" result="Failure" executed="True">
+                    <failure>
+                      <message>Expected $null or empty, because The parameter 'Name' has been declared but not used. ;The parameter 'AnswerFile' has been declared but not used., but got @(The parameter 'Name' has been declared but not used. , The parameter 'AnswerFile' has been declared but not used. ).</message>
+                      <stack-trace>at $saResults | Should -BeNullOrEmpty -Because $($saResults.Message -join ';'), C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21
+at &lt;ScriptBlock&gt;, C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21</stack-trace>
+                    </failure>
+                  </test-case>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="File: NewMoldManifest" executed="True" result="Failure" success="False" time="2.2172" asserts="0" description="File: NewMoldManifest">
+            <results>
+              <test-suite type="TestFixture" name="File: NewMoldManifest.Code Quality Check" executed="True" result="Failure" success="False" time="0.3574" asserts="0" description="File: NewMoldManifest.Code Quality Check">
+                <results>
+                  <test-case description="is valid PowerShell Code" name="File: NewMoldManifest.Code Quality Check.is valid PowerShell Code" time="0.0078" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="passess ScriptAnalyzer" name="File: NewMoldManifest.Code Quality Check.passess ScriptAnalyzer" time="0.3368" asserts="0" success="False" result="Failure" executed="True">
+                    <failure>
+                      <message>Expected $null or empty, because Function 'New-MoldManifest' has verb that could change system state. Therefore, the function has to support 'ShouldProcess'., but got Function 'New-MoldManifest' has verb that could change system state. Therefore, the function has to support 'ShouldProcess'..</message>
+                      <stack-trace>at $saResults | Should -BeNullOrEmpty -Because $($saResults.Message -join ';'), C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21
+at &lt;ScriptBlock&gt;, C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21</stack-trace>
+                    </failure>
+                  </test-case>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="File: TestMoldManifest" executed="True" result="Failure" success="False" time="2.2385" asserts="0" description="File: TestMoldManifest">
+            <results>
+              <test-suite type="TestFixture" name="File: TestMoldManifest.Code Quality Check" executed="True" result="Failure" success="False" time="0.0175" asserts="0" description="File: TestMoldManifest.Code Quality Check">
+                <results>
+                  <test-case description="is valid PowerShell Code" name="File: TestMoldManifest.Code Quality Check.is valid PowerShell Code" time="0.006" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="passess ScriptAnalyzer" name="File: TestMoldManifest.Code Quality Check.passess ScriptAnalyzer" time="0.0077" asserts="0" success="False" result="Failure" executed="True">
+                    <failure>
+                      <message>Expected $null or empty, because The parameter 'TemplatePath' has been declared but not used., but got The parameter 'TemplatePath' has been declared but not used. .</message>
+                      <stack-trace>at $saResults | Should -BeNullOrEmpty -Because $($saResults.Message -join ';'), C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21
+at &lt;ScriptBlock&gt;, C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21</stack-trace>
+                    </failure>
+                  </test-case>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="File: UpdateMoldManifest" executed="True" result="Failure" success="False" time="2.3783" asserts="0" description="File: UpdateMoldManifest">
+            <results>
+              <test-suite type="TestFixture" name="File: UpdateMoldManifest.Code Quality Check" executed="True" result="Failure" success="False" time="0.1332" asserts="0" description="File: UpdateMoldManifest.Code Quality Check">
+                <results>
+                  <test-case description="is valid PowerShell Code" name="File: UpdateMoldManifest.Code Quality Check.is valid PowerShell Code" time="0.0058" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="passess ScriptAnalyzer" name="File: UpdateMoldManifest.Code Quality Check.passess ScriptAnalyzer" time="0.1222" asserts="0" success="False" result="Failure" executed="True">
+                    <failure>
+                      <message>Expected $null or empty, because Function 'Update-MoldManifest' has verb that could change system state. Therefore, the function has to support 'ShouldProcess'., but got Function 'Update-MoldManifest' has verb that could change system state. Therefore, the function has to support 'ShouldProcess'..</message>
+                      <stack-trace>at $saResults | Should -BeNullOrEmpty -Because $($saResults.Message -join ';'), C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21
+at &lt;ScriptBlock&gt;, C:\Localwork\Projects\Mold\tests\ScriptAnalyzer.Tests.ps1:21</stack-trace>
+                    </failure>
+                  </test-case>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

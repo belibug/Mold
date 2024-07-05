@@ -1,8 +1,14 @@
-function Get-Mold {
+function Get-MoldTemplate {
+    [CmdletBinding()]
     param (
-        $Path
+        [Parameter()]
+        [switch]$IncludeInstalledModules,
+        [switch]$ListAvailable,
+        [string]$Name,
+        [string]$TemplatePath,
+        [switch]$Recurse
     )
-    Write-Verbose 'This will retrive all Molds'
+    Write-Warning 'Code Not yet implemented for Get-MoldTemplate'
 }
 function Invoke-Mold {
     [CmdletBinding()]
@@ -133,11 +139,12 @@ function New-MoldManifest {
         'Manifest created' | Write-Host -ForegroundColor Green
     }
 }
-function Test-Mold {
+function Test-MoldTemplate {
+    [CmdletBinding()]
     param (
-        $Path
+        [string]$TemplatePath
     )
-    Write-Verbose 'This will test mold and existing templates'
+    Write-Warning 'Code Not implemented for Test-MoldTemplate'
 }
 function Update-MoldManifest {
     [CmdletBinding()]
