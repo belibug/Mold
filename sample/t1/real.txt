@@ -1,1 +1,4 @@
-<% MOLD_TEXT_SimpleName %>
+<% MOLD_TEXT_ForText %>
+<% MOLD_CHOICE_ForChoice %>
+<% MOLD_CHOICE_ForBlock %>
+<% MOLD_CHOICE_SomethingNew %>

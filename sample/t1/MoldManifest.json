@@ -4,17 +4,41 @@
     "version": "0.2.0",
     "title": "New PowerShell Module",
     "description": "Plaster template for creating the files for a PowerShell module.",
-    "guid": "0b3e475c-2230-4df7-8106-de81f0f1b47e",
+    "guid": "cf1ee0d6-93c6-427c-b8ea-74b12083ab00",
     "includeFileTypes": "ps1, txt, md, json, xml, psm1, psd1",
     "includeLiteralFile": "config"
   },
   "parameters": {
-    "SimpleName": {
-      "Caption": "SimpleName",
+    "ForText": {
+      "Caption": "ForText",
       "Message": "Ask your question",
       "Prompt": "Response",
       "Type": "TEXT",
       "Default": ""
+    },
+    "ForChoice": {
+      "Caption": "ForChoice",
+      "Message": "Choose One",
+      "Prompt": "Response",
+      "Type": "CHOICE",
+      "Default": "Default",
+      "Choice": {
+        "One": "Selecting one",
+        "Two": "Selecting Two",
+        "Three": "Selecting Three",
+        "Default": "Selecting Default"
+      }
+    },
+    "ForBlock": {
+      "Caption": "ForBlock",
+      "Message": "Do you want to include?",
+      "Prompt": "Response",
+      "Type": "BLOCK",
+      "Default": "No",
+      "Choice": {
+        "Yes": "Block text between Start and END will be included",
+        "No": "Block text will be removed"
+      }
     }
   }
 }

@@ -1,3 +1,3 @@
 param($MoldData)
-Write-Host $MoldData.SimpleName -ForegroundColor Green
+$MoldData
 # <% MOLD_TEXT_Datafromscript %>

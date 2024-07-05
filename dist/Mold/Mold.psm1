@@ -10,16 +10,13 @@ function Invoke-Mold {
         [Parameter(ParameterSetName = 'TemplatePath', Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]$TemplatePath,
-    
         #TODO pending implementation. Get Manifest by name
         [Parameter(ParameterSetName = 'Name', Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]$Name,
-
         [string]$DestinationPath = (Get-Location).Path,
-
         #TODO Provide input as answerfile
-        [string]$answerFile
+        [string]$AnswerFile
     )
     
     # Validate MoldTemplate
@@ -29,6 +26,7 @@ function Invoke-Mold {
     $data = Get-Content -Raw $MoldManifest | ConvertFrom-Json -AsHashtable
     $result = New-Object System.Collections.arrayList
 
+    #region Get Answers interactively
     $data.parameters.Keys | ForEach-Object {
         $q = [MoldQ]::new($data.parameters.$_)
         $q.answer = Read-awesomeHost $q
@@ -40,21 +38,21 @@ function Invoke-Mold {
     $result | ForEach-Object {
         $DataForScriptRunning.Add($_.Key, $_.Answer)
     }
-    # return $result.Toarray()
+    #endregion
 
-    # Create Content
+    #region Placeholder Subtitution
     $locaTempFolder = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), $data.metadata.name)
-    ## Cleanup if folder exists
+    # Cleanup if folder exists
     if (Test-Path $locaTempFolder) { Remove-Item $locaTempFolder -Recurse -Force }
     New-Item -ItemType Directory -Path $locaTempFolder | Out-Null
     Copy-Item -Path "$TemplatePath\*" -Destination "$locaTempFolder" -Recurse -Exclude ('MoldManifest.json', 'MOLD_SCRIPT.ps1')
 
-    # Invoke-Item $locaTempFolder
     $allowedExtensions = $data.metadata.includeFileTypes -split ',' | ForEach-Object { ".$($_.Trim())" }
     $allowedFilenames = $data.metadata.includeLiteralFile -split ',' | ForEach-Object { $_.Trim() }
     $allFilesInLocalTemp = Get-ChildItem -File -Recurse -Path $locaTempFolder | Where-Object {
         $_.Extension -in $allowedExtensions -or $_.BaseName -in $allowedFilenames
     }
+
     #TODO use dot net to speed up this process
     $allFilesInLocalTemp | ForEach-Object {
         try {
@@ -82,20 +80,19 @@ function Invoke-Mold {
         Out-File -FilePath $_ -InputObject $EachFileContent 
     }
 
-
-    # Copy changed files back to destination
+    # Copy all files to destination
     try { 
         Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force -ErrorAction Stop 
     } catch {
         $Error[0]
         Write-Error 'Something went wrong while copying'
     }
+    #endregion
 
     #region Script Runner
     $MoldScriptFile = (Join-Path -Path $TemplatePath -ChildPath 'MOLD_SCRIPT.ps1' | Resolve-Path).Path
     Invoke-MoldScriptFile -MoldData $DataForScriptRunning -ScriptPath $MoldScriptFile -DestinationPath $DestinationPath
-    
-    Write-Host 'All done'
+    #endregion
 }
 function New-MoldManifest {
     [CmdletBinding()]
@@ -142,11 +139,35 @@ function Test-Mold {
     )
     Write-Verbose 'This will test mold and existing templates'
 }
-function Update-Mold {
+function Update-MoldManifest {
+    [CmdletBinding()]
     param (
-        $Path
+        [Parameter(Mandatory)]
+        [string]
+        $TemplatePath
     )
-    Write-Verbose 'This will update existing mold templates'
+    
+    # Validate MoldTemplate
+    Test-MoldHealth -Path $TemplatePath
+    $MoldManifest = Join-Path -Path $TemplatePath -ChildPath 'MoldManifest.json'
+
+    $data = Get-Content -Raw $MoldManifest | ConvertFrom-Json -AsHashtable
+    
+    $AllPaceholders = Get-MoldPlaceHolders -Path $TemplatePath
+    
+    $AllPaceholders | ForEach-Object {
+        $PhType, $PhName = $_.split('_')
+        if ($data.parameters.Keys -contains $PhName ) {
+            
+            if ($data.parameters.$PhName.Type -eq $PhType) {
+                Write-Host "Found existing name and type - $PhName"
+            } else {
+                Write-Host "Type has changed - $PhName"
+            }
+        } else {
+            Write-Host "found new $PhName"
+        }
+    }
 }
 class MoldQ {
     #TODO Make certain things as mandatory
@@ -257,9 +278,8 @@ function Invoke-MoldScriptFile {
     Set-Location $DestinationPath
     Invoke-Command -ScriptBlock {
         param([hashtable]$MoldData, [string]$scriptPath)
-        & $scriptPath -MoldData $MoldData 
+        & $scriptPath -MoldData $MoldData
     } -ArgumentList $MoldData , $MoldScriptFile
-    if ($?) { Write-Warning 'MOLD_SCRIPT finished with errors' }
     Pop-Location -StackName 'MoldScriptExecution'
 }
 function Read-AwesomeHost {
