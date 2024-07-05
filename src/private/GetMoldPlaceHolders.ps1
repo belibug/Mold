@@ -20,7 +20,15 @@ function Get-MoldPlaceHolders {
             Write-Verbose "Skipping, failed to read $_"
             return
         }
-        $PlaceHolders += $ParamMatch | ForEach-Object { $_.Groups[1].Value }
+        $ParamMatch = $ParamMatch | ForEach-Object { $_.Groups[1].Value }
+
+        #Check if block parameter has both START and END
+        if ($ParamMatch -like 'BLOCK_*') {
+            if (-not($ParamMatch -like '*_START' -and $ParamMatch -like '*_END')) {
+                Write-Error 'Incomplete Block statement, Block must have start and end!' -ErrorAction Stop
+            }
+        }
+        $PlaceHolders += $ParamMatch
     }
     return $PlaceHolders
 }

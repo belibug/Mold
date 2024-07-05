@@ -1,0 +1,10 @@
+Hi <% MOLD_TEXT_StudentName %>,
+
+This is your exam result, you have <% MOLD_CHOICE_PassOrFail %>
+
+<% MOLD_BLOCK_PassedOnly_START %>
+Congratulations on Passing!!
+<% MOLD_BLOCK_PassedOnly_END %>
+
+Yours Truly,
+Professor <% MOLD_TEXT_ProfName %>

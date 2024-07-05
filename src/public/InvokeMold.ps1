@@ -61,6 +61,7 @@ function Invoke-Mold {
             $EachFileContent = $EachFileContent -replace $MOLDParam, $_.Answer
         }
         
+        #TODO instead of regex replace which is leaving blank line, use line delete option
         $result | Where-Object { $_.Type -eq 'BLOCK' } | ForEach-Object {
             $BlockStart = '<% MOLD_{0}_{1}_{2} %>' -f $_.Type, $_.Key, 'START'
             $BlockEnd = '<% MOLD_{0}_{1}_{2} %>' -f $_.Type, $_.Key, 'END'
@@ -74,6 +75,9 @@ function Invoke-Mold {
         Out-File -FilePath $_ -InputObject $EachFileContent 
     }
 
+    if (Test-Path $DestinationPath -PathType Container) {
+        New-Item -Path $DestinationPath -ItemType Directory -Force
+    }
     # Copy all files to destination
     try { 
         Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force -ErrorAction Stop 
@@ -84,7 +88,10 @@ function Invoke-Mold {
     #endregion
 
     #region Script Runner
-    $MoldScriptFile = (Join-Path -Path $TemplatePath -ChildPath 'MOLD_SCRIPT.ps1' | Resolve-Path).Path
-    Invoke-MoldScriptFile -MoldData $DataForScriptRunning -ScriptPath $MoldScriptFile -DestinationPath $DestinationPath
+    $MoldScriptFile = Join-Path -Path $TemplatePath -ChildPath 'MOLD_SCRIPT.ps1'
+    if (Test-Path $MoldScriptFile) {
+        $MoldScriptFile = (Resolve-Path $MoldScriptFile).Path
+        Invoke-MoldScriptFile -MoldData $DataForScriptRunning -ScriptPath $MoldScriptFile -DestinationPath $DestinationPath
+    }
     #endregion
 }

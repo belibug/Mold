@@ -73,6 +73,7 @@ function Invoke-Mold {
             $EachFileContent = $EachFileContent -replace $MOLDParam, $_.Answer
         }
         
+        #TODO instead of regex replace which is leaving blank line, use line delete option
         $result | Where-Object { $_.Type -eq 'BLOCK' } | ForEach-Object {
             $BlockStart = '<% MOLD_{0}_{1}_{2} %>' -f $_.Type, $_.Key, 'START'
             $BlockEnd = '<% MOLD_{0}_{1}_{2} %>' -f $_.Type, $_.Key, 'END'
@@ -86,6 +87,9 @@ function Invoke-Mold {
         Out-File -FilePath $_ -InputObject $EachFileContent 
     }
 
+    if (Test-Path $DestinationPath -PathType Container) {
+        New-Item -Path $DestinationPath -ItemType Directory -Force
+    }
     # Copy all files to destination
     try { 
         Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force -ErrorAction Stop 
@@ -96,8 +100,11 @@ function Invoke-Mold {
     #endregion
 
     #region Script Runner
-    $MoldScriptFile = (Join-Path -Path $TemplatePath -ChildPath 'MOLD_SCRIPT.ps1' | Resolve-Path).Path
-    Invoke-MoldScriptFile -MoldData $DataForScriptRunning -ScriptPath $MoldScriptFile -DestinationPath $DestinationPath
+    $MoldScriptFile = Join-Path -Path $TemplatePath -ChildPath 'MOLD_SCRIPT.ps1'
+    if (Test-Path $MoldScriptFile) {
+        $MoldScriptFile = (Resolve-Path $MoldScriptFile).Path
+        Invoke-MoldScriptFile -MoldData $DataForScriptRunning -ScriptPath $MoldScriptFile -DestinationPath $DestinationPath
+    }
     #endregion
 }
 function New-MoldManifest {
@@ -164,7 +171,7 @@ function Update-MoldManifest {
     
     # Checking PlaceHolders against MoldManifest - to add/update variables
     $AllPaceholders | ForEach-Object {
-        $PhType, $PhName = $_.split('_')
+        $PhType, $PhName, $Extra = $_.split('_')
         if ($data.parameters.Keys -contains $PhName ) {
             if ($data.parameters.$PhName.Type -ne $PhType) {
                 Write-Host "Type has changed for: $PhName"
@@ -183,7 +190,11 @@ function Update-MoldManifest {
     # Checking MoldManifest against PlaceHolders - to remove stale variables
     $keysToRemove = @()
     $data.parameters.Keys | ForEach-Object {
-        $dataPlaceHolder = '{0}_{1}' -f $data.parameters.$_.Type, $_
+        if ($data.parameters.$_.Type -eq 'BLOCK') {
+            $dataPlaceHolder = '{0}_{1}_{2}' -f $data.parameters.$_.Type, $_, 'START'
+        } else {
+            $dataPlaceHolder = '{0}_{1}' -f $data.parameters.$_.Type, $_
+        }
         if ($AllPaceholders -notcontains $dataPlaceHolder) {
             Write-Host "No longer valid placeholder: $_"
             $keysToRemove += $_
@@ -193,7 +204,8 @@ function Update-MoldManifest {
     $keysToRemove.foreach({ $data.parameters.remove($_) })
     if ($ChangesMade -gt 0) {
         Write-Host "Updated $ChangesMade parameters in MoldManifest"
-        $data | ConvertTo-Json -Depth 5 | Out-File -FilePath $MoldManifest -Encoding utf8
+        $result = $data | ConvertTo-Json -Depth 5 -ErrorAction Stop
+        Out-File -InputObject $result -FilePath $MoldManifest -Encoding utf8 -ErrorAction Stop
     } else {
         Write-Host 'No changes found in templatePath, MoldManifest unchanged' 
     }
@@ -286,7 +298,15 @@ function Get-MoldPlaceHolders {
             Write-Verbose "Skipping, failed to read $_"
             return
         }
-        $PlaceHolders += $ParamMatch | ForEach-Object { $_.Groups[1].Value }
+        $ParamMatch = $ParamMatch | ForEach-Object { $_.Groups[1].Value }
+
+        #Check if block parameter has both START and END
+        if ($ParamMatch -like 'BLOCK_*') {
+            if (-not($ParamMatch -like '*_START' -and $ParamMatch -like '*_END')) {
+                Write-Error 'Incomplete Block statement, Block must have start and end!' -ErrorAction Stop
+            }
+        }
+        $PlaceHolders += $ParamMatch
     }
     return $PlaceHolders
 }

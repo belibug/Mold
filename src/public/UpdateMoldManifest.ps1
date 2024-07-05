@@ -16,7 +16,7 @@ function Update-MoldManifest {
     
     # Checking PlaceHolders against MoldManifest - to add/update variables
     $AllPaceholders | ForEach-Object {
-        $PhType, $PhName = $_.split('_')
+        $PhType, $PhName, $Extra = $_.split('_')
         if ($data.parameters.Keys -contains $PhName ) {
             if ($data.parameters.$PhName.Type -ne $PhType) {
                 Write-Host "Type has changed for: $PhName"
@@ -35,7 +35,11 @@ function Update-MoldManifest {
     # Checking MoldManifest against PlaceHolders - to remove stale variables
     $keysToRemove = @()
     $data.parameters.Keys | ForEach-Object {
-        $dataPlaceHolder = '{0}_{1}' -f $data.parameters.$_.Type, $_
+        if ($data.parameters.$_.Type -eq 'BLOCK') {
+            $dataPlaceHolder = '{0}_{1}_{2}' -f $data.parameters.$_.Type, $_, 'START'
+        } else {
+            $dataPlaceHolder = '{0}_{1}' -f $data.parameters.$_.Type, $_
+        }
         if ($AllPaceholders -notcontains $dataPlaceHolder) {
             Write-Host "No longer valid placeholder: $_"
             $keysToRemove += $_
@@ -45,7 +49,8 @@ function Update-MoldManifest {
     $keysToRemove.foreach({ $data.parameters.remove($_) })
     if ($ChangesMade -gt 0) {
         Write-Host "Updated $ChangesMade parameters in MoldManifest"
-        $data | ConvertTo-Json -Depth 5 | Out-File -FilePath $MoldManifest -Encoding utf8
+        $result = $data | ConvertTo-Json -Depth 5 -ErrorAction Stop
+        Out-File -InputObject $result -FilePath $MoldManifest -Encoding utf8 -ErrorAction Stop
     } else {
         Write-Host 'No changes found in templatePath, MoldManifest unchanged' 
     }

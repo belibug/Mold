@@ -1,3 +1,0 @@
-guru
-One
-<% MOLD_BLOCK_ForBlock %>
