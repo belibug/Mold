@@ -1,41 +1,46 @@
 {
   "metadata": {
-    "name": "NewPowerShellModule",
-    "version": "0.2.0",
-    "title": "New PowerShell Module",
-    "description": "Plaster template for creating the files for a PowerShell module.",
-    "guid": "0a2a2218-1c3f-4cd9-9654-c8df86a6e90d"
+    "name": "examrecord",
+    "version": "0.0.1",
+    "title": "Exam Record",
+    "description": "MOLD Template",
+    "guid": "862c967f-e566-4e9c-b562-a35ce38e16e9",
+    "FileTypes": "ps1, txt, md, json, xml, psm1, psd1",
+    "LiteralFile": "config"
   },
   "parameters": {
     "StudentName": {
       "Caption": "StudentName",
-      "Message": "Who is the student that is question?",
+      "Message": "Ask your question",
       "Prompt": "Response",
       "Type": "TEXT",
-      "Default": "OurBelovedStudent"
+      "Default": ""
     },
-    "PassOrFail": {
-      "Caption": "PassOrFail",
-      "Message": "Did he pass?",
-      "Prompt": "Response",
-      "Type": "YESNO",
-      "Default": "No",
-      "Choice": {
-        "Yes": "Select Yes",
-        "No": "Select No"
-      }
-    },
+    "PassOrFail": null,
     "Professor": {
       "Caption": "Professor",
-      "Message": "Who was the class teacher",
+      "Message": "Choose One",
       "Prompt": "Response",
       "Type": "CHOICE",
       "Default": "Default",
       "Choice": {
-        "Ragu": "Ragu the PT sir",
-        "Sowmya": "Sowmya the sweety",
-        "Manju": "Selecting Three",
-        "Default": "No class teacher"
+        "One": "Selecting one",
+        "Two": "Selecting Two",
+        "Three": "Selecting Three",
+        "Default": "Selecting Default"
+      }
+    },
+    "Director": {
+      "Caption": "Director",
+      "Message": "Choose One",
+      "Prompt": "Response",
+      "Type": "CHOICE",
+      "Default": "Default",
+      "Choice": {
+        "One": "Selecting one",
+        "Two": "Selecting Two",
+        "Three": "Selecting Three",
+        "Default": "Selecting Default"
       }
     }
   }

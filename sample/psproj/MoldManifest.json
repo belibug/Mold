@@ -1,23 +1,23 @@
 {
   "metadata": {
-    "name": "t1",
+    "name": "psprojcect",
     "version": "0.0.1",
-    "title": "Test one",
+    "title": "PowerShell Projects",
     "description": "MOLD Template",
-    "guid": "97a48613-86e4-403a-b358-9f4abc2eb2f1",
+    "guid": "e0e18cc3-f54f-40f5-a4da-e2b154915e68",
     "FileTypes": "ps1, txt, md, json, xml, psm1, psd1",
     "LiteralFile": "config"
   },
   "parameters": {
-    "ForText": {
-      "Caption": "ForText",
+    "StudentName": {
+      "Caption": "StudentName",
       "Message": "Ask your question",
       "Prompt": "Response",
       "Type": "TEXT",
       "Default": ""
     },
-    "ForChoice": {
-      "Caption": "ForChoice",
+    "PassOrFail": {
+      "Caption": "PassOrFail",
       "Message": "Choose One",
       "Prompt": "Response",
       "Type": "CHOICE",
@@ -29,8 +29,8 @@
         "Default": "Selecting Default"
       }
     },
-    "ForBlock": {
-      "Caption": "ForBlock",
+    "PassedOnly": {
+      "Caption": "PassedOnly",
       "Message": "Do you want to include?",
       "Prompt": "Response",
       "Type": "BLOCK",
@@ -39,6 +39,13 @@
         "Yes": "Block text between Start and END will be included",
         "No": "Block text will be removed"
       }
+    },
+    "ProfName": {
+      "Caption": "ProfName",
+      "Message": "Ask your question",
+      "Prompt": "Response",
+      "Type": "TEXT",
+      "Default": ""
     }
   }
 }

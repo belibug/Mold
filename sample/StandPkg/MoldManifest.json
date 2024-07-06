@@ -1,0 +1,12 @@
+{
+  "metadata": {
+    "name": "AppPkg",
+    "version": "0.0.1",
+    "title": "App Packaging",
+    "description": "MOLD Template",
+    "guid": "923e7241-02e5-4272-b633-96c921e0e37b",
+    "FileTypes": "ps1, txt, md, json, xml, psm1, psd1",
+    "LiteralFile": "config"
+  },
+  "parameters": {}
+}

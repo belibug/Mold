@@ -4,14 +4,16 @@ $ProjectOut = '.\sample\out'
 $Build = $true
 # $Build = $false
 
-if ($Build) {
-    Get-ChildItem $ProjectOut -Recurse | Remove-Item -Force
-    Remove-Item -Path "$Project\MoldManifest.json" -Force -ErrorAction SilentlyContinue
-    New-MoldManifest -Path $Project -Verbose
-}
+# if ($Build) {
+#     Get-ChildItem $ProjectOut -Recurse | Remove-Item -Force
+#     Remove-Item -Path "$Project\MoldManifest.json" -Force -ErrorAction SilentlyContinue
+#     New-MoldManifest -Path $Project -Verbose
+# }
 
-
-# Invoke-Mold -TemplatePath $Project -DestinationPath $ProjectOut -Verbose
-if (!$Build) {
-    Update-MoldManifest -TemplatePath $Project
-}
+$env:MOLD_TEMPLATES = '/Users/beli/Temp/MoldTemplates'
+# # Invoke-Mold -TemplatePath $Project -DestinationPath $ProjectOut -Verbose
+# if (!$Build) {
+#     Update-MoldManifest -TemplatePath $Project
+# }
+Get-MoldTemplate #| Get-Member
+#-TemplatePath '/Users/beli/localwork/Mold/sample' -Recurse

@@ -30,13 +30,13 @@ function New-MoldManifest {
     }
 
     $metadata = [ordered]@{
-        'name'               = $MetaResult.ShortName
-        'version'            = '0.0.1'
-        'title'              = $MetaResult.Title
-        'description'        = 'MOLD Template'
-        'guid'               = New-Guid | ForEach-Object Guid
-        'includeFileTypes'   = 'ps1, txt, md, json, xml, psm1, psd1'
-        'includeLiteralFile' = 'config'
+        'name'        = $MetaResult.ShortName
+        'version'     = '0.0.1'
+        'title'       = $MetaResult.Title
+        'description' = 'MOLD Template'
+        'guid'        = New-Guid | ForEach-Object Guid
+        'FileTypes'   = 'ps1, txt, md, json, xml, psm1, psd1'
+        'LiteralFile' = 'config'
     }
 
     $data = [ordered]@{

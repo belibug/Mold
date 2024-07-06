@@ -41,8 +41,8 @@ function Invoke-Mold {
     New-Item -ItemType Directory -Path $locaTempFolder | Out-Null
     Copy-Item -Path "$TemplatePath\*" -Destination "$locaTempFolder" -Recurse -Exclude ('MoldManifest.json', 'MOLD_SCRIPT.ps1')
 
-    $allowedExtensions = $data.metadata.includeFileTypes -split ',' | ForEach-Object { ".$($_.Trim())" }
-    $allowedFilenames = $data.metadata.includeLiteralFile -split ',' | ForEach-Object { $_.Trim() }
+    $allowedExtensions = $data.metadata.FileTypes -split ',' | ForEach-Object { ".$($_.Trim())" }
+    $allowedFilenames = $data.metadata.LiteralFile -split ',' | ForEach-Object { $_.Trim() }
     $allFilesInLocalTemp = Get-ChildItem -File -Recurse -Path $locaTempFolder | Where-Object {
         $_.Extension -in $allowedExtensions -or $_.BaseName -in $allowedFilenames
     }

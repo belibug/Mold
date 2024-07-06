@@ -1,12 +1,12 @@
 {
   "metadata": {
-    "name": "NewPowerShellModule",
-    "version": "0.2.0",
-    "title": "New PowerShell Module",
-    "description": "Plaster template for creating the files for a PowerShell module.",
-    "guid": "ef00881e-19d4-447b-8105-eb94b51e9a58",
-    "includeFileTypes": "ps1, txt, md, json",
-    "includeLiteralFile": "config, some"
+    "name": "psfunction",
+    "version": "0.0.1",
+    "title": "PowerShell Function",
+    "description": "MOLD Template",
+    "guid": "4d8547db-5e0b-452d-9065-22d3cb1ac5a6",
+    "FileTypes": "ps1, txt, md, json, xml, psm1, psd1",
+    "LiteralFile": "config"
   },
   "parameters": {
     "HELP": {

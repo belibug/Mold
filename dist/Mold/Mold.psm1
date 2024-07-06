@@ -8,7 +8,31 @@ function Get-MoldTemplate {
         [string]$TemplatePath,
         [switch]$Recurse
     )
-    Write-Warning 'Code Not yet implemented for Get-MoldTemplate'
+    $AllTemplates = New-Object System.Collections.ArrayList
+
+
+    ## If path is specified, return only templates found in path
+    if ($PSBoundParameters.ContainsKey('TemplatePath')) {
+        $result = Get-TemplatesFromPath -Path $TemplatePath -Recurse:$Recurse
+        return $result
+    }
+
+    # Templates found in MOLD module
+    $Templates = Get-TemplatesFromPath -Path $PSScriptRoot\resources -Recurse
+    $AllTemplates.Add($Templates) | Out-Null
+
+    # Templates from MOLD_TEMPLATES environment variable location
+    if ($env:MOLD_TEMPLATES) {
+        $env:MOLD_TEMPLATES -split (';') | ForEach-Object {
+            $Templates = Get-TemplatesFromPath -Path $_ -Recurse
+            $AllTemplates.Add($Templates) | Out-Null
+        }
+    }
+    # Templates from Other Modules using PSData-extensions
+    #TODO Not yet implemented
+
+    $Out = $AllTemplates | ConvertTo-Json | ConvertFrom-Json
+    return $Out
 }
 function Invoke-Mold {
     [CmdletBinding()]
@@ -53,8 +77,8 @@ function Invoke-Mold {
     New-Item -ItemType Directory -Path $locaTempFolder | Out-Null
     Copy-Item -Path "$TemplatePath\*" -Destination "$locaTempFolder" -Recurse -Exclude ('MoldManifest.json', 'MOLD_SCRIPT.ps1')
 
-    $allowedExtensions = $data.metadata.includeFileTypes -split ',' | ForEach-Object { ".$($_.Trim())" }
-    $allowedFilenames = $data.metadata.includeLiteralFile -split ',' | ForEach-Object { $_.Trim() }
+    $allowedExtensions = $data.metadata.FileTypes -split ',' | ForEach-Object { ".$($_.Trim())" }
+    $allowedFilenames = $data.metadata.LiteralFile -split ',' | ForEach-Object { $_.Trim() }
     $allFilesInLocalTemp = Get-ChildItem -File -Recurse -Path $locaTempFolder | Where-Object {
         $_.Extension -in $allowedExtensions -or $_.BaseName -in $allowedFilenames
     }
@@ -139,13 +163,13 @@ function New-MoldManifest {
     }
 
     $metadata = [ordered]@{
-        'name'               = $MetaResult.ShortName
-        'version'            = '0.0.1'
-        'title'              = $MetaResult.Title
-        'description'        = 'MOLD Template'
-        'guid'               = New-Guid | ForEach-Object Guid
-        'includeFileTypes'   = 'ps1, txt, md, json, xml, psm1, psd1'
-        'includeLiteralFile' = 'config'
+        'name'        = $MetaResult.ShortName
+        'version'     = '0.0.1'
+        'title'       = $MetaResult.Title
+        'description' = 'MOLD Template'
+        'guid'        = New-Guid | ForEach-Object Guid
+        'FileTypes'   = 'ps1, txt, md, json, xml, psm1, psd1'
+        'LiteralFile' = 'config'
     }
 
     $data = [ordered]@{
@@ -321,6 +345,40 @@ function Get-MoldPlaceHolders {
     }
     return $PlaceHolders
 }
+function Get-TemplatesFromPath {
+    [CmdletBinding()]
+    param (
+        [Parameter()]
+        [string]
+        $Path,
+        [switch]$Recurse
+    )
+    $ValidManifestFiles = New-Object System.Collections.ArrayList
+    $Output = New-Object System.Collections.ArrayList
+
+    $MMFiles = Get-ChildItem -Path $Path -Filter 'MoldManifest.json' -Recurse:$Recurse
+    if (-not $MMFiles) { 
+        Write-Verbose "No MoldManifest files found in given $path"
+    }
+    $MMFiles | ForEach-Object {
+        if (Test-ValidMoldManifestFile -ManifestPath $_.FullName) {
+            $ValidManifestFiles.Add($_.FullName) | Out-Null
+        }
+    }
+    $ValidManifestFiles | ForEach-Object {
+        $data = (Get-Content $_ -Raw | ConvertFrom-Json).metadata
+        $data | Add-Member -NotePropertyName TemplateFile -NotePropertyValue $_
+        $obj = [pscustomobject]@{
+            Name         = $data.name
+            Version      = $data.version
+            Description  = $data.description
+            GUID         = $data.guid
+            ManifestFile = $_
+        }
+        $Output.Add($obj) | Out-Null
+    }
+    return $Output
+}
 function Invoke-MoldScriptFile {
     param(
         [hashtable]$MoldData,
@@ -413,6 +471,21 @@ function Test-MoldStatus {
         if (Test-Path $MoldManifest) {
             Write-Error 'MoldManifest file already present, use Update-Mold or start over'
         }
+    }
+}
+function Test-ValidMoldManifestFile {
+    [CmdletBinding()]
+    param (
+        $ManifestPath
+    )
+    $ManifestSchema = Get-Content "$PSScriptRoot\resources\SimpleMoldSchema.json" -Raw
+
+    if (Test-Json -Path $ManifestPath -Schema $ManifestSchema -ErrorAction SilentlyContinue) {
+        Write-Verbose "passed json test : $ManifestPath"
+        return $true
+    } else {
+        Write-Verbose "Failed json test : $ManifestPath"
+        return $false
     }
 }
 
