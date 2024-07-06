@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "name": "sam2",
+    "name": "sample2",
     "version": "0.0.1",
     "title": "Sample 2",
-    "description": "MOLD Template",
+    "description": "MOLD Template 2nd",
     "guid": "e53ac2b7-669e-4228-bfb9-131d5a2db56a",
     "FileTypes": "ps1, txt, md, json, xml, psm1, psd1",
     "LiteralFile": "config"
@@ -11,22 +11,22 @@
   "parameters": {
     "YourName": {
       "Caption": "YourName",
-      "Message": "Ask your question",
+      "Message": "Whats your name?",
       "Prompt": "Response",
       "Type": "TEXT",
-      "Default": ""
+      "Default": "MANDATORY"
     },
     "FavEditor": {
       "Caption": "FavEditor",
-      "Message": "Choose One",
+      "Message": "What is your favourite editor?",
       "Prompt": "Response",
       "Type": "CHOICE",
-      "Default": "Default",
+      "Default": "Others",
       "Choice": {
-        "One": "Selecting one",
-        "Two": "Selecting Two",
-        "Three": "Selecting Three",
-        "Default": "Selecting Default"
+        "nvim": "VIM forever",
+        "code": "Extension extravagenza",
+        "notepad++": "Simplicity old schooler",
+        "Others": "Goes with wind!"
       }
     }
   }

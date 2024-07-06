@@ -2,7 +2,7 @@ function Invoke-Mold {
     [CmdletBinding()]
     param (
         [Parameter(ParameterSetName = 'TemplatePath', Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty()] 
         [string]$TemplatePath,
         #TODO pending implementation. Get Manifest by name
         [Parameter(ParameterSetName = 'Name', Mandatory = $true)]
@@ -13,6 +13,15 @@ function Invoke-Mold {
         [string]$AnswerFile
     )
     
+    if ($PSBoundParameters.ContainsKey('Name')) {
+        $TemplateDetails = Get-MoldTemplate -Name $Name
+        if ($TemplateDetails.ManifestFile) {
+            $TemplatePath = Split-Path -Path $TemplateDetails.ManifestFile -Parent
+        } else {
+            Write-Error "No Mold Template found by name $Name" -ErrorAction Stop
+        }
+    }
+
     # Validate MoldTemplate
     Test-MoldHealth -Path $TemplatePath
     $MoldManifest = Join-Path -Path $TemplatePath -ChildPath 'MoldManifest.json'

@@ -9,7 +9,7 @@
         },
         "ShortName": {
             "Caption": "ShortName",
-            "Message": "Enter short unique Name for template (no spaces or specialcharacter",
+            "Message": "Enter short unique Name for template (no spaces or specialcharacter)",
             "Prompt": "ShortName",
             "Type": "TEXT",
             "Default": "MANDATORY"

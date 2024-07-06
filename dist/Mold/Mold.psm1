@@ -1,15 +1,27 @@
 function Get-MoldTemplate {
     [CmdletBinding()]
     param (
-        [Parameter()]
-        [switch]$IncludeInstalledModules,
-        [switch]$ListAvailable,
+        [ValidateNotNullOrEmpty()]
         [string]$Name,
+        [ValidateNotNullOrEmpty()]
+        [Parameter(ParameterSetName = 'TemplatePathSet')]
         [string]$TemplatePath,
-        [switch]$Recurse
+        [Parameter(ParameterSetName = 'TemplatePathSet')]
+        [switch]$Recurse,
+        [switch]$IncludeInstalledModules
     )
+
     $AllTemplates = New-Object System.Collections.ArrayList
 
+    if ($PSBoundParameters.ContainsKey('Name')) {
+        $TemplateByName = Get-MoldTemplate | Where-Object { $_.Name -eq $Name }
+        if ($TemplateByName) {
+            return $TemplateByName 
+        } else {
+            Write-Warning "Did not find any template named $Name" 
+            return
+        }
+    }
 
     ## If path is specified, return only templates found in path
     if ($PSBoundParameters.ContainsKey('TemplatePath')) {
@@ -19,13 +31,13 @@ function Get-MoldTemplate {
 
     # Templates found in MOLD module
     $Templates = Get-TemplatesFromPath -Path $PSScriptRoot\resources -Recurse
-    $AllTemplates.Add($Templates) | Out-Null
+    $Templates | ForEach-Object { $AllTemplates.Add($_) | Out-Null }
 
     # Templates from MOLD_TEMPLATES environment variable location
     if ($env:MOLD_TEMPLATES) {
         $env:MOLD_TEMPLATES -split (';') | ForEach-Object {
             $Templates = Get-TemplatesFromPath -Path $_ -Recurse
-            $AllTemplates.Add($Templates) | Out-Null
+            $Templates | ForEach-Object { $AllTemplates.Add($_) | Out-Null }
         }
     }
     # Templates from Other Modules using PSData-extensions
@@ -38,7 +50,7 @@ function Invoke-Mold {
     [CmdletBinding()]
     param (
         [Parameter(ParameterSetName = 'TemplatePath', Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty()] 
         [string]$TemplatePath,
         #TODO pending implementation. Get Manifest by name
         [Parameter(ParameterSetName = 'Name', Mandatory = $true)]
@@ -49,6 +61,15 @@ function Invoke-Mold {
         [string]$AnswerFile
     )
     
+    if ($PSBoundParameters.ContainsKey('Name')) {
+        $TemplateDetails = Get-MoldTemplate -Name $Name
+        if ($TemplateDetails.ManifestFile) {
+            $TemplatePath = Split-Path -Path $TemplateDetails.ManifestFile -Parent
+        } else {
+            Write-Error "No Mold Template found by name $Name" -ErrorAction Stop
+        }
+    }
+
     # Validate MoldTemplate
     Test-MoldHealth -Path $TemplatePath
     $MoldManifest = Join-Path -Path $TemplatePath -ChildPath 'MoldManifest.json'
@@ -245,6 +266,20 @@ function Update-MoldManifest {
         Write-Host 'No changes found in templatePath, MoldManifest unchanged' 
     }
 }
+$TemplateName_ScriptBlock = {
+    param (
+        $commandName,
+        $parameterName,
+        $wordToComplete,
+        $commandAst,
+        $fakeBoundParameters )
+    
+    $commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters | Out-Null
+    $presetData = Get-MoldTemplate 
+    $presetData.Name | Where-Object { $_ -like "$wordToComplete*" }
+}
+Register-ArgumentCompleter -CommandName Get-MoldTemplate -ParameterName Name -ScriptBlock $TemplateName_ScriptBlock
+Register-ArgumentCompleter -CommandName Invoke-Mold -ParameterName Name -ScriptBlock $TemplateName_ScriptBlock
 class MoldQ {
     #TODO Make certain things as mandatory
     [string]$Type
@@ -359,6 +394,7 @@ function Get-TemplatesFromPath {
     $MMFiles = Get-ChildItem -Path $Path -Filter 'MoldManifest.json' -Recurse:$Recurse
     if (-not $MMFiles) { 
         Write-Verbose "No MoldManifest files found in given $path"
+        return $null
     }
     $MMFiles | ForEach-Object {
         if (Test-ValidMoldManifestFile -ManifestPath $_.FullName) {
@@ -366,13 +402,12 @@ function Get-TemplatesFromPath {
         }
     }
     $ValidManifestFiles | ForEach-Object {
-        $data = (Get-Content $_ -Raw | ConvertFrom-Json).metadata
-        $data | Add-Member -NotePropertyName TemplateFile -NotePropertyValue $_
+        $data = Get-Content $_ -Raw | ConvertFrom-Json
         $obj = [pscustomobject]@{
-            Name         = $data.name
-            Version      = $data.version
-            Description  = $data.description
-            GUID         = $data.guid
+            Name         = $data.metadata.name
+            Version      = $data.metadata.version
+            Description  = $data.metadata.description
+            GUID         = $data.metadata.guid
             ManifestFile = $_
         }
         $Output.Add($obj) | Out-Null

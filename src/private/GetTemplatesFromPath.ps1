@@ -12,6 +12,7 @@ function Get-TemplatesFromPath {
     $MMFiles = Get-ChildItem -Path $Path -Filter 'MoldManifest.json' -Recurse:$Recurse
     if (-not $MMFiles) { 
         Write-Verbose "No MoldManifest files found in given $path"
+        return $null
     }
     $MMFiles | ForEach-Object {
         if (Test-ValidMoldManifestFile -ManifestPath $_.FullName) {
@@ -19,13 +20,12 @@ function Get-TemplatesFromPath {
         }
     }
     $ValidManifestFiles | ForEach-Object {
-        $data = (Get-Content $_ -Raw | ConvertFrom-Json).metadata
-        $data | Add-Member -NotePropertyName TemplateFile -NotePropertyValue $_
+        $data = Get-Content $_ -Raw | ConvertFrom-Json
         $obj = [pscustomobject]@{
-            Name         = $data.name
-            Version      = $data.version
-            Description  = $data.description
-            GUID         = $data.guid
+            Name         = $data.metadata.name
+            Version      = $data.metadata.version
+            Description  = $data.metadata.description
+            GUID         = $data.metadata.guid
             ManifestFile = $_
         }
         $Output.Add($obj) | Out-Null

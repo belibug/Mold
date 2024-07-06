@@ -10,10 +10,10 @@ $Build = $true
 #     New-MoldManifest -Path $Project -Verbose
 # }
 
-$env:MOLD_TEMPLATES = '/Users/beli/Temp/MoldTemplates'
+# $env:MOLD_TEMPLATES = '/Users/beli/Temp/MoldTemplates'
 # # Invoke-Mold -TemplatePath $Project -DestinationPath $ProjectOut -Verbose
 # if (!$Build) {
 #     Update-MoldManifest -TemplatePath $Project
 # }
-Get-MoldTemplate #| Get-Member
+Get-MoldTemplate -Name sample2
 #-TemplatePath '/Users/beli/localwork/Mold/sample' -Recurse

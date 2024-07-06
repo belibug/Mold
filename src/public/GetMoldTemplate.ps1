@@ -1,15 +1,27 @@
 function Get-MoldTemplate {
     [CmdletBinding()]
     param (
-        [Parameter()]
-        [switch]$IncludeInstalledModules,
-        [switch]$ListAvailable,
+        [ValidateNotNullOrEmpty()]
         [string]$Name,
+        [ValidateNotNullOrEmpty()]
+        [Parameter(ParameterSetName = 'TemplatePathSet')]
         [string]$TemplatePath,
-        [switch]$Recurse
+        [Parameter(ParameterSetName = 'TemplatePathSet')]
+        [switch]$Recurse,
+        [switch]$IncludeInstalledModules
     )
+
     $AllTemplates = New-Object System.Collections.ArrayList
 
+    if ($PSBoundParameters.ContainsKey('Name')) {
+        $TemplateByName = Get-MoldTemplate | Where-Object { $_.Name -eq $Name }
+        if ($TemplateByName) {
+            return $TemplateByName 
+        } else {
+            Write-Warning "Did not find any template named $Name" 
+            return
+        }
+    }
 
     ## If path is specified, return only templates found in path
     if ($PSBoundParameters.ContainsKey('TemplatePath')) {
@@ -19,13 +31,13 @@ function Get-MoldTemplate {
 
     # Templates found in MOLD module
     $Templates = Get-TemplatesFromPath -Path $PSScriptRoot\resources -Recurse
-    $AllTemplates.Add($Templates) | Out-Null
+    $Templates | ForEach-Object { $AllTemplates.Add($_) | Out-Null }
 
     # Templates from MOLD_TEMPLATES environment variable location
     if ($env:MOLD_TEMPLATES) {
         $env:MOLD_TEMPLATES -split (';') | ForEach-Object {
             $Templates = Get-TemplatesFromPath -Path $_ -Recurse
-            $AllTemplates.Add($Templates) | Out-Null
+            $Templates | ForEach-Object { $AllTemplates.Add($_) | Out-Null }
         }
     }
     # Templates from Other Modules using PSData-extensions

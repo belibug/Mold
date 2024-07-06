@@ -4,9 +4,9 @@ Mold is a fast and powerful templating and cloning engine for PowerShell (and be
 
 ## Pending
 
-- [x] Ask for project details while create template
+- [X] Ask for project details while create template
+- [X] Invoke MOLD by name instead of path
 - [ ] Build PSData Extension logic just like `plaster`
-- [ ] Invoke MOLD by name instead of path
 - [ ] JSON Schema and validation
 
 ## Complete
@@ -14,9 +14,8 @@ Mold is a fast and powerful templating and cloning engine for PowerShell (and be
 - `New-MoldManifest` : Can generate MoldManifest.json easily
 - `Update-MoldManifest` : Can update existing MoldManifest.json
 - `Invoke-Mold` : Main command to involke mold template
-> GET TEMPLATES
-> BUILD LOCAL REPO and Invoke by NAME
+- `Get-MoldTemplates` : Get all mold templates
+- Both Invoke and Get now supports autocompletition by NAME
+- Load local Templates using env path (; Semicolon seaparted folder path) - MOLD_TEMPLATES
 
 ### In-Progress - Pending
-
-- [ ] $EnvVariable for templates path (; Semicolon seaparted folder path) - MOLD_TEMPLATES
