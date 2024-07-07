@@ -1,3 +1,45 @@
+<#
+.SYNOPSIS
+   Gets Mold templates from various sources.
+
+.DESCRIPTION
+   This function retrieves Mold templates from different locations, including the local Template directory, path defined in environment variable  MOLD_TEMPLATES, and templates from installed modules. It can filter templates by name or path, and optionally recurse through subdirectories. The function returns an array of objects representing the found templates.
+
+.PARAMETER Name
+   The name of the Mold template to search for. Search by name, supports tab completion
+
+.PARAMETER TemplatePath
+   The path to a directory containing Mold templates.
+
+.PARAMETER Recurse
+   If specified, the function will search for templates recursively in provide path.
+
+.PARAMETER IncludeInstalledModules
+   If specified, the function will also search for templates in installed modules. (Not yet implemented)
+
+.EXAMPLE
+Get-MoldTemplate
+
+Retrieves the Mold template from Mold Module samples, Templates in path defined in env varible MOLD_TEMPLATES
+
+.EXAMPLE
+   Get-MoldTemplate -Name 'MyTemplate'
+
+   Retrieves the Mold template named 'MyTemplate' from any of the available sources.
+
+.EXAMPLE
+   Get-MoldTemplate -TemplatePath 'C:\Templates' -Recurse
+
+   Retrieves all Mold templates found in the 'C:\Templates' directory and its subdirectories.
+
+.NOTES
+   The function prioritizes templates found by name.
+   The function searches for templates in the following locations:
+     - The templates shipped along with MOLD module
+     - Directories specified in the 'MOLD_TEMPLATES' environment variable.
+     - Potentially installed modules (not yet implemented).
+   The function returns an array of objects with properties like 'Name', 'ManifestFile', and 'TemplatePath'.
+#>
 function Get-MoldTemplate {
     [CmdletBinding()]
     param (
@@ -46,6 +88,40 @@ function Get-MoldTemplate {
     $Out = $AllTemplates | ConvertTo-Json | ConvertFrom-Json
     return $Out
 }
+<#
+.SYNOPSIS
+   Creates a new project or file from a Mold template.
+
+.DESCRIPTION
+   This function creates a new project or file based on a Mold template. It can either use a template from a specified path or retrieve a template by name. The function then interactively gathers input from the user, substitutes placeholders in the template files, and optionally executes a script to further customize the generated output.
+
+.PARAMETER TemplatePath
+   The path to the Mold template directory.
+
+.PARAMETER Name
+   The name of the Mold template to use.
+
+.PARAMETER DestinationPath
+   The path where the generated project or file will be created. Defaults to the current working directory.
+
+.PARAMETER AnswerFile
+   The path to an answer file containing pre-filled responses to template questions. (Not yet implemented)
+
+.EXAMPLE
+   Invoke-Mold -TemplatePath 'C:\Templates\MyProject'
+
+   Creates a new project based on the template located at 'C:\Templates\MyProject'. The user will be prompted for input to customize the project.
+
+.EXAMPLE
+   Invoke-Mold -Name 'WebTemplate'
+
+   Creates a new project based on the Mold template named 'WebTemplate'. The template will be retrieved from a central location.
+
+.NOTES
+   This function requires the 'MoldManifest.json' file to be present in the template directory.
+   The function supports placeholder substitution in template files using the format '<% MOLD_{Type}_{Key} %>'.
+   The function can optionally execute a 'MOLD_SCRIPT.ps1' file to further customize the generated output.
+#>
 function Invoke-Mold {
     [CmdletBinding()]
     param (
@@ -153,6 +229,25 @@ function Invoke-Mold {
     }
     #endregion
 }
+<#
+.SYNOPSIS
+   Creates a new MoldManifest.json file for a Mold template.
+
+.DESCRIPTION
+   This function creates a new MoldManifest.json file in the specified directory, which is used to define the structure and parameters of a Mold template. Generate Mold Template for any file or project easily using this command.
+
+.PARAMETER Path
+   The path to the directory where template conten is store, the MoldManifest.json file will be created in same directory.
+
+.EXAMPLE
+   New-MoldManifest -Path 'C:\Templates\MyProject'
+
+   Creates a new MoldManifest.json file in the 'C:\Templates\MyProject' directory. The user will be prompted for input to define the template's metadata and parameters.
+
+.NOTES
+    This generates the necessary MoldManifest.json file template. Once created ensure you edit the file to update the placeholder questions/responses.
+#>
+
 function New-MoldManifest {
     [CmdletBinding()]
     param (
@@ -210,6 +305,25 @@ function Test-MoldTemplate {
     )
     Write-Warning 'Code Not implemented for Test-MoldTemplate'
 }
+<#
+.SYNOPSIS
+   Updates a MoldManifest.json file based on changes in a content of template directory.
+
+.DESCRIPTION
+   This function updates an existing MoldManifest.json file to reflect changes made to the corresponding Mold template project directory. It first validates the template directory and reads the existing manifest. Then, it compares the placeholders found in the template files with the parameters defined in the manifest. If it finds new placeholders, it adds them to the manifest. If it finds placeholders that are no longer present in the template, it removes them from the manifest. If it finds placeholders whose types have changed, it updates their types in the manifest. Finally, it writes the updated manifest back to the MoldManifest.json file.
+
+.PARAMETER TemplatePath
+   The path to the Mold template directory.
+
+.EXAMPLE
+   Update-MoldManifest -TemplatePath 'C:\Templates\MyProject'
+
+   Updates the MoldManifest.json file in the 'C:\Templates\MyProject' directory based on any changes made to the template files.
+
+.NOTES
+   This function requires the 'MoldManifest.json' file to be present in the template directory. It only updates existing template MoldManifest.json file.
+#>
+
 function Update-MoldManifest {
     [CmdletBinding()]
     param (

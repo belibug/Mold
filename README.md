@@ -9,6 +9,9 @@ Mold is a fast and powerful templating and cloning engine for PowerShell (and be
 - [ ] Build PSData Extension logic just like `plaster`
 - [ ] JSON Schema and validation
 
+> [!WARNING]
+> MAKE IT PS 5.1 Compatible
+
 ## Complete
 
 - `New-MoldManifest` : Can generate MoldManifest.json easily
@@ -82,6 +85,21 @@ Invoke-Mold -TemplatePath 'C:\path\to\your\template'
 # Or 
 Invoke-Mold -Name 'MyTemplate'
 ```
+
+### MOLD_SCRIPT
+
+Advanced templates can be created by building your own logic in `MOLD_SCRIPT.ps1` in root directory of template. This function has full access to all variables/response collected during `Invoke-Mold` command. 
+
+Sample file - MOLD_SCRIPT.ps1
+```PowerShell
+param($MoldData)
+# Should start with param block to get all MOLD variables in key-value pair
+New-Item $MoldData.FileNameResponse
+```
+- Script must be of exact name `MOLD_SCRIPT.ps1`
+- Must be in root directory of templates
+- Must have param block with $MoldData to accept parameter values
+- Will be run at the end of `Invoke-Mold` command. Can modify only template files (done in isolation) and has no access to target directory.
 
 ## Advanced Usage
 
