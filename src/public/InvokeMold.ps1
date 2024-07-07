@@ -38,7 +38,6 @@ function Invoke-Mold {
         [Parameter(ParameterSetName = 'TemplatePath', Mandatory = $true)]
         [ValidateNotNullOrEmpty()] 
         [string]$TemplatePath,
-        #TODO pending implementation. Get Manifest by name
         [Parameter(ParameterSetName = 'Name', Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]$Name,

@@ -41,50 +41,50 @@ Retrieves the Mold template from Mold Module samples, Templates in path defined 
    The function returns an array of objects with properties like 'Name', 'ManifestFile', and 'TemplatePath'.
 #>
 function Get-MoldTemplate {
-    [CmdletBinding()]
-    param (
-        [ValidateNotNullOrEmpty()]
-        [string]$Name,
-        [ValidateNotNullOrEmpty()]
-        [Parameter(ParameterSetName = 'TemplatePathSet')]
-        [string]$TemplatePath,
-        [Parameter(ParameterSetName = 'TemplatePathSet')]
-        [switch]$Recurse,
-        [switch]$IncludeInstalledModules
-    )
+   [CmdletBinding()]
+   param (
+      [ValidateNotNullOrEmpty()]
+      [string]$Name,
+      [ValidateNotNullOrEmpty()]
+      [Parameter(ParameterSetName = 'TemplatePathSet')]
+      [string]$TemplatePath,
+      [Parameter(ParameterSetName = 'TemplatePathSet')]
+      [switch]$Recurse,
+      [switch]$IncludeInstalledModules
+   )
 
-    $AllTemplates = New-Object System.Collections.ArrayList
+   $AllTemplates = New-Object System.Collections.ArrayList
 
-    if ($PSBoundParameters.ContainsKey('Name')) {
-        $TemplateByName = Get-MoldTemplate | Where-Object { $_.Name -eq $Name }
-        if ($TemplateByName) {
-            return $TemplateByName 
-        } else {
-            Write-Warning "Did not find any template named $Name" 
-            return
-        }
-    }
+   if ($PSBoundParameters.ContainsKey('Name')) {
+      $TemplateByName = Get-MoldTemplate | Where-Object { $_.Name -eq $Name }
+      if ($TemplateByName) {
+         return $TemplateByName 
+      } else {
+         Write-Warning "Did not find any template named $Name" 
+         return
+      }
+   }
 
-    ## If path is specified, return only templates found in path
-    if ($PSBoundParameters.ContainsKey('TemplatePath')) {
-        $result = Get-TemplatesFromPath -Path $TemplatePath -Recurse:$Recurse
-        return $result
-    }
+   ## If path is specified, return only templates found in path
+   if ($PSBoundParameters.ContainsKey('TemplatePath')) {
+      $result = Get-TemplatesFromPath -Path $TemplatePath -Recurse:$Recurse
+      return $result
+   }
 
-    # Templates found in MOLD module
-    $Templates = Get-TemplatesFromPath -Path $PSScriptRoot\resources -Recurse
-    $Templates | ForEach-Object { $AllTemplates.Add($_) | Out-Null }
+   # Templates found in MOLD module
+   $Templates = Get-TemplatesFromPath -Path $PSScriptRoot\resources -Recurse
+   $Templates | ForEach-Object { $AllTemplates.Add($_) | Out-Null }
 
-    # Templates from MOLD_TEMPLATES environment variable location
-    if ($env:MOLD_TEMPLATES) {
-        $env:MOLD_TEMPLATES -split (';') | ForEach-Object {
-            $Templates = Get-TemplatesFromPath -Path $_ -Recurse
-            $Templates | ForEach-Object { $AllTemplates.Add($_) | Out-Null }
-        }
-    }
-    # Templates from Other Modules using PSData-extensions
-    #TODO Not yet implemented
+   # Templates from MOLD_TEMPLATES environment variable location
+   if ($env:MOLD_TEMPLATES) {
+      $env:MOLD_TEMPLATES -split (';') | ForEach-Object {
+         $Templates = Get-TemplatesFromPath -Path $_ -Recurse
+         $Templates | ForEach-Object { $AllTemplates.Add($_) | Out-Null }
+      }
+   }
+   # Templates from Other Modules using PSData-extensions
+   #TODO Not yet implemented - PSData Extensions
 
-    $Out = $AllTemplates | ConvertTo-Json | ConvertFrom-Json
-    return $Out
+   $Out = $AllTemplates | ConvertTo-Json | ConvertFrom-Json
+   return $Out
 }

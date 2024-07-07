@@ -1,5 +1,5 @@
 class MoldQ {
-    #TODO Make certain things as mandatory
+    #TODO Mandatory parameters in class
     [string]$Type
     [string]$Key
     [string]$Caption
