@@ -2,9 +2,9 @@
   "metadata": {
     "name": "s2",
     "version": "0.0.1",
-    "title": "Something 2",
+    "title": "This is sample 2",
     "description": "MOLD Template",
-    "guid": "9e2663dd-0378-4f3a-89f7-f2b344ef7433",
+    "guid": "cd633b24-a81d-46ab-aa94-8cf5e081887e",
     "FileTypes": "ps1, txt, md, json, xml, psm1, psd1",
     "LiteralFile": "config"
   },
@@ -16,7 +16,13 @@
       "Type": "TEXT",
       "Default": ""
     },
-    "PASSED": null,
+    "PASSED": {
+      "Caption": "PASSED",
+      "Message": "Ask your question",
+      "Prompt": "Response",
+      "Type": "TEXT",
+      "Default": ""
+    },
     "Myself": {
       "Caption": "Myself",
       "Message": "Ask your question",

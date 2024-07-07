@@ -1,5 +1,5 @@
 Import-Module ./dist/Mold
-$Project = '.\sample\t1'
+$Project = '.\sample\s2'
 $ProjectOut = '.\sample\out'
 $Build = $true
 # $Build = $false
@@ -11,9 +11,9 @@ $Build = $true
 # }
 
 # $env:MOLD_TEMPLATES = '/Users/beli/Temp/MoldTemplates'
-# # Invoke-Mold -TemplatePath $Project -DestinationPath $ProjectOut -Verbose
+Invoke-Mold -TemplatePath $Project -DestinationPath $ProjectOut -Verbose
 # if (!$Build) {
 #     Update-MoldManifest -TemplatePath $Project
 # }
-Get-MoldTemplate -Name sample2
+# Get-MoldTemplate -Name sample2
 #-TemplatePath '/Users/beli/localwork/Mold/sample' -Recurse

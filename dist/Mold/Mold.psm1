@@ -135,20 +135,21 @@ function Invoke-Mold {
     if (-not (Test-Path $DestinationPath -PathType Container)) {
         New-Item -Path $DestinationPath -ItemType Directory -Force
     }
+
+    #region Script Runner
+    $MoldScriptFile = Join-Path -Path $TemplatePath -ChildPath 'MOLD_SCRIPT.ps1'
+    if (Test-Path $MoldScriptFile) {
+        $MoldScriptFile = (Resolve-Path $MoldScriptFile).Path
+        Invoke-MoldScriptFile -MoldData $DataForScriptRunning -ScriptPath $MoldScriptFile -WorkingDirectory $locaTempFolder
+    }
+    #endregion
+
     # Copy all files to destination
     try { 
         Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force -ErrorAction Stop 
     } catch {
         $Error[0]
         Write-Error 'Something went wrong while copying'
-    }
-    #endregion
-
-    #region Script Runner
-    $MoldScriptFile = Join-Path -Path $TemplatePath -ChildPath 'MOLD_SCRIPT.ps1'
-    if (Test-Path $MoldScriptFile) {
-        $MoldScriptFile = (Resolve-Path $MoldScriptFile).Path
-        Invoke-MoldScriptFile -MoldData $DataForScriptRunning -ScriptPath $MoldScriptFile -DestinationPath $DestinationPath
     }
     #endregion
 }
@@ -418,17 +419,17 @@ function Invoke-MoldScriptFile {
     param(
         [hashtable]$MoldData,
         [string]$ScriptPath,
-        [string]$DestinationPath
+        [string]$WorkingDirectory
     )
     if (-not (Test-Path $MoldScriptFile)) {
         Write-Verbose 'No MOLD_SCRIPT found in template directory, Ignoring script run'
         return
     }
     Push-Location -StackName 'MoldScriptExecution'
-    if (-not (Test-Path $DestinationPath)) { 
+    if (-not (Test-Path $WorkingDirectory)) { 
         Write-Error 'Destination path not accessible, unable to run MOLD_SCRIPT' -ErrorAction Stop
     }
-    Set-Location $DestinationPath
+    Set-Location $WorkingDirectory
     Invoke-Command -ScriptBlock {
         param([hashtable]$MoldData, [string]$scriptPath)
         & $scriptPath -MoldData $MoldData

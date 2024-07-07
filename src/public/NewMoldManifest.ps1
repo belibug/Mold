@@ -1,3 +1,22 @@
+<#
+.SYNOPSIS
+   Creates a new MoldManifest.json file for a Mold template.
+
+.DESCRIPTION
+   This function creates a new MoldManifest.json file in the specified directory, which is used to define the structure and parameters of a Mold template. Generate Mold Template for any file or project easily using this command.
+
+.PARAMETER Path
+   The path to the directory where template conten is store, the MoldManifest.json file will be created in same directory.
+
+.EXAMPLE
+   New-MoldManifest -Path 'C:\Templates\MyProject'
+
+   Creates a new MoldManifest.json file in the 'C:\Templates\MyProject' directory. The user will be prompted for input to define the template's metadata and parameters.
+
+.NOTES
+    This generates the necessary MoldManifest.json file template. Once created ensure you edit the file to update the placeholder questions/responses.
+#>
+
 function New-MoldManifest {
     [CmdletBinding()]
     param (

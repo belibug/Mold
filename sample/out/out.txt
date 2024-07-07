@@ -1,0 +1,10 @@
+
+Path
+----
+/var/folders/31/02d60swj10qf22zkykky5qgr0000gn/T/s2
+
+LastWriteTime : 7/6/2024 10:42:10 PM
+Length        : 73
+Name          : one.txt
+
+

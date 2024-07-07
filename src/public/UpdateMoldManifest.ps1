@@ -1,3 +1,22 @@
+<#
+.SYNOPSIS
+   Updates a MoldManifest.json file based on changes in a content of template directory.
+
+.DESCRIPTION
+   This function updates an existing MoldManifest.json file to reflect changes made to the corresponding Mold template project directory. It first validates the template directory and reads the existing manifest. Then, it compares the placeholders found in the template files with the parameters defined in the manifest. If it finds new placeholders, it adds them to the manifest. If it finds placeholders that are no longer present in the template, it removes them from the manifest. If it finds placeholders whose types have changed, it updates their types in the manifest. Finally, it writes the updated manifest back to the MoldManifest.json file.
+
+.PARAMETER TemplatePath
+   The path to the Mold template directory.
+
+.EXAMPLE
+   Update-MoldManifest -TemplatePath 'C:\Templates\MyProject'
+
+   Updates the MoldManifest.json file in the 'C:\Templates\MyProject' directory based on any changes made to the template files.
+
+.NOTES
+   This function requires the 'MoldManifest.json' file to be present in the template directory. It only updates existing template MoldManifest.json file.
+#>
+
 function Update-MoldManifest {
     [CmdletBinding()]
     param (

@@ -1,3 +1,37 @@
+<#
+.SYNOPSIS
+   Creates a new project or file from a Mold template.
+
+.DESCRIPTION
+   This function creates a new project or file based on a Mold template. It can either use a template from a specified path or retrieve a template by name. The function then interactively gathers input from the user, substitutes placeholders in the template files, and optionally executes a script to further customize the generated output.
+
+.PARAMETER TemplatePath
+   The path to the Mold template directory.
+
+.PARAMETER Name
+   The name of the Mold template to use.
+
+.PARAMETER DestinationPath
+   The path where the generated project or file will be created. Defaults to the current working directory.
+
+.PARAMETER AnswerFile
+   The path to an answer file containing pre-filled responses to template questions. (Not yet implemented)
+
+.EXAMPLE
+   Invoke-Mold -TemplatePath 'C:\Templates\MyProject'
+
+   Creates a new project based on the template located at 'C:\Templates\MyProject'. The user will be prompted for input to customize the project.
+
+.EXAMPLE
+   Invoke-Mold -Name 'WebTemplate'
+
+   Creates a new project based on the Mold template named 'WebTemplate'. The template will be retrieved from a central location.
+
+.NOTES
+   This function requires the 'MoldManifest.json' file to be present in the template directory.
+   The function supports placeholder substitution in template files using the format '<% MOLD_{Type}_{Key} %>'.
+   The function can optionally execute a 'MOLD_SCRIPT.ps1' file to further customize the generated output.
+#>
 function Invoke-Mold {
     [CmdletBinding()]
     param (
@@ -87,20 +121,21 @@ function Invoke-Mold {
     if (-not (Test-Path $DestinationPath -PathType Container)) {
         New-Item -Path $DestinationPath -ItemType Directory -Force
     }
+
+    #region Script Runner
+    $MoldScriptFile = Join-Path -Path $TemplatePath -ChildPath 'MOLD_SCRIPT.ps1'
+    if (Test-Path $MoldScriptFile) {
+        $MoldScriptFile = (Resolve-Path $MoldScriptFile).Path
+        Invoke-MoldScriptFile -MoldData $DataForScriptRunning -ScriptPath $MoldScriptFile -WorkingDirectory $locaTempFolder
+    }
+    #endregion
+
     # Copy all files to destination
     try { 
         Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force -ErrorAction Stop 
     } catch {
         $Error[0]
         Write-Error 'Something went wrong while copying'
-    }
-    #endregion
-
-    #region Script Runner
-    $MoldScriptFile = Join-Path -Path $TemplatePath -ChildPath 'MOLD_SCRIPT.ps1'
-    if (Test-Path $MoldScriptFile) {
-        $MoldScriptFile = (Resolve-Path $MoldScriptFile).Path
-        Invoke-MoldScriptFile -MoldData $DataForScriptRunning -ScriptPath $MoldScriptFile -DestinationPath $DestinationPath
     }
     #endregion
 }
