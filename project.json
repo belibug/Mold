@@ -4,7 +4,7 @@
   "Version": "0.0.3",
   "Manifest": {
     "Author": "Manjunath Beli",
-    "PowerShellHostVersion": "5.1",
+    "PowerShellHostVersion": "7.4",
     "GUID": "ac5bbfdb-fd2d-4c12-a178-15f1864c26e0",
     "Tags": [
       "plaster",

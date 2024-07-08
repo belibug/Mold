@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "name": "s2",
+    "FileTypes": "ps1, txt, md, json, xml, psm1, psd1",
+    "LiteralFile": "config",
+    "guid": "fa2a2441-a3f7-4e4c-863a-c7daeafc6848",
+    "title": "Sample 2",
+    "version": "0.0.1",
+    "description": "MOLD Template"
+  },
+  "parameters": {
+    "Myself": {
+      "Default": "",
+      "Prompt": "Response",
+      "Message": "Ask your question",
+      "Type": "TEXT",
+      "Caption": "Myself"
+    },
+    "StudentName": {
+      "Default": "",
+      "Prompt": "Response",
+      "Type": "TEXT",
+      "Caption": "StudentName",
+      "Message": "Ask your question"
+    },
+    "PASSED": {
+      "Message": "Choose One",
+      "Type": "CHOICE",
+      "Default": "Pass",
+      "Caption": "PASSED",
+      "Prompt": "Response",
+      "Choice": {
+        "Fail": "Selecting Two",
+        "Pass": "Selecting one",
+        "Lost": "Selecting Three"
+      }
+    }
+  }
+}

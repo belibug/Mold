@@ -1,0 +1,23 @@
+[
+  {
+    "Key": "StudentName",
+    "Caption": "StudentName",
+    "Description": "Enter the student name",
+    "Options": "Any string value",
+    "Answer": "Rahul"
+  },
+  {
+    "Key": "PASSED",
+    "Caption": "PASSED",
+    "Description": "Choose One",
+    "Options": "Pass,Fail,Lost",
+    "Answer": "Pass"
+  },
+  {
+    "Key": "Myself",
+    "Caption": "Myself",
+    "Description": "Who is evaluating this?",
+    "Options": "Any string value",
+    "Answer": "Hero"
+  }
+]

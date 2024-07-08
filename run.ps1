@@ -2,7 +2,7 @@ Import-Module ./dist/Mold
 $Project = '.\sample\s2'
 $ProjectOut = '.\sample\out'
 $Build = $true
-# $Build = $false
+$Build = $false
 
 if ($Build) {
     Get-ChildItem $ProjectOut -Recurse | Remove-Item -Force
@@ -15,7 +15,7 @@ if ($Build) {
 # if (!$Build) {
 #     Update-MoldManifest -TemplatePath $Project
 # }
-# Get-MoldTemplate -Name sample2
+Get-MoldTemplate -TemplatePath $Project
 #-TemplatePath '/Users/beli/localwork/Mold/sample' -Recurse
 
 
