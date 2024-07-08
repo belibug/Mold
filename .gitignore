@@ -1,3 +1,5 @@
 temp
 .vscode
 .DS_Store
+run.ps1
+justfile
