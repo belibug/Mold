@@ -11,9 +11,14 @@ $Build = $true
 # }
 
 # $env:MOLD_TEMPLATES = '/Users/beli/Temp/MoldTemplates'
-Invoke-Mold -TemplatePath $Project -DestinationPath $ProjectOut -Verbose
+# Invoke-Mold -TemplatePath $Project -DestinationPath $ProjectOut -Verbose
 # if (!$Build) {
 #     Update-MoldManifest -TemplatePath $Project
 # }
 # Get-MoldTemplate -Name sample2
 #-TemplatePath '/Users/beli/localwork/Mold/sample' -Recurse
+
+
+$ManifestFile = '/Users/beli/localwork/Mold/src/resources/SampleTemplate-02/MoldManifest.json'
+
+$data = Get-Content -Path $ManifestFile -Raw | ConvertFrom-Json 

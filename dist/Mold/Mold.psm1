@@ -41,52 +41,52 @@ Retrieves the Mold template from Mold Module samples, Templates in path defined 
    The function returns an array of objects with properties like 'Name', 'ManifestFile', and 'TemplatePath'.
 #>
 function Get-MoldTemplate {
-    [CmdletBinding()]
-    param (
-        [ValidateNotNullOrEmpty()]
-        [string]$Name,
-        [ValidateNotNullOrEmpty()]
-        [Parameter(ParameterSetName = 'TemplatePathSet')]
-        [string]$TemplatePath,
-        [Parameter(ParameterSetName = 'TemplatePathSet')]
-        [switch]$Recurse,
-        [switch]$IncludeInstalledModules
-    )
+   [CmdletBinding()]
+   param (
+      [ValidateNotNullOrEmpty()]
+      [string]$Name,
+      [ValidateNotNullOrEmpty()]
+      [Parameter(ParameterSetName = 'TemplatePathSet')]
+      [string]$TemplatePath,
+      [Parameter(ParameterSetName = 'TemplatePathSet')]
+      [switch]$Recurse,
+      [switch]$IncludeInstalledModules
+   )
 
-    $AllTemplates = New-Object System.Collections.ArrayList
+   $AllTemplates = New-Object System.Collections.ArrayList
 
-    if ($PSBoundParameters.ContainsKey('Name')) {
-        $TemplateByName = Get-MoldTemplate | Where-Object { $_.Name -eq $Name }
-        if ($TemplateByName) {
-            return $TemplateByName 
-        } else {
-            Write-Warning "Did not find any template named $Name" 
-            return
-        }
-    }
+   if ($PSBoundParameters.ContainsKey('Name')) {
+      $TemplateByName = Get-MoldTemplate | Where-Object { $_.Name -eq $Name }
+      if ($TemplateByName) {
+         return $TemplateByName 
+      } else {
+         Write-Warning "Did not find any template named $Name" 
+         return
+      }
+   }
 
-    ## If path is specified, return only templates found in path
-    if ($PSBoundParameters.ContainsKey('TemplatePath')) {
-        $result = Get-TemplatesFromPath -Path $TemplatePath -Recurse:$Recurse
-        return $result
-    }
+   ## If path is specified, return only templates found in path
+   if ($PSBoundParameters.ContainsKey('TemplatePath')) {
+      $result = Get-TemplatesFromPath -Path $TemplatePath -Recurse:$Recurse
+      return $result
+   }
 
-    # Templates found in MOLD module
-    $Templates = Get-TemplatesFromPath -Path $PSScriptRoot\resources -Recurse
-    $Templates | ForEach-Object { $AllTemplates.Add($_) | Out-Null }
+   # Templates found in MOLD module
+   $Templates = Get-TemplatesFromPath -Path $PSScriptRoot\resources -Recurse
+   $Templates | ForEach-Object { $AllTemplates.Add($_) | Out-Null }
 
-    # Templates from MOLD_TEMPLATES environment variable location
-    if ($env:MOLD_TEMPLATES) {
-        $env:MOLD_TEMPLATES -split (';') | ForEach-Object {
-            $Templates = Get-TemplatesFromPath -Path $_ -Recurse
-            $Templates | ForEach-Object { $AllTemplates.Add($_) | Out-Null }
-        }
-    }
-    # Templates from Other Modules using PSData-extensions
-    #TODO Not yet implemented
+   # Templates from MOLD_TEMPLATES environment variable location
+   if ($env:MOLD_TEMPLATES) {
+      $env:MOLD_TEMPLATES -split (';') | ForEach-Object {
+         $Templates = Get-TemplatesFromPath -Path $_ -Recurse
+         $Templates | ForEach-Object { $AllTemplates.Add($_) | Out-Null }
+      }
+   }
+   # Templates from Other Modules using PSData-extensions
+   #TODO Not yet implemented - PSData Extensions
 
-    $Out = $AllTemplates | ConvertTo-Json | ConvertFrom-Json
-    return $Out
+   $Out = $AllTemplates | ConvertTo-Json | ConvertFrom-Json
+   return $Out
 }
 <#
 .SYNOPSIS
@@ -105,10 +105,13 @@ function Get-MoldTemplate {
    The path where the generated project or file will be created. Defaults to the current working directory.
 
 .PARAMETER AnswerFile
-   The path to an answer file containing pre-filled responses to template questions. (Not yet implemented)
+   The path to an answer file containing pre-filled responses to template questions. Use New-MoldAnswerFile to generate the answer file skeleton for a given template.
 
 .EXAMPLE
    Invoke-Mold -TemplatePath 'C:\Templates\MyProject'
+
+   .EXAMPLE
+   Invoke-Mold -TemplatePath 'C:\Templates\MyProject' -AnswerFile GoldProject.json
 
    Creates a new project based on the template located at 'C:\Templates\MyProject'. The user will be prompted for input to customize the project.
 
@@ -128,12 +131,10 @@ function Invoke-Mold {
         [Parameter(ParameterSetName = 'TemplatePath', Mandatory = $true)]
         [ValidateNotNullOrEmpty()] 
         [string]$TemplatePath,
-        #TODO pending implementation. Get Manifest by name
         [Parameter(ParameterSetName = 'Name', Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]$Name,
         [string]$DestinationPath = (Get-Location).Path,
-        #TODO Provide input as answerfile
         [string]$AnswerFile
     )
     
@@ -153,12 +154,24 @@ function Invoke-Mold {
     $data = Get-Content -Raw $MoldManifest | ConvertFrom-Json -AsHashtable
     $result = New-Object System.Collections.arrayList
 
-    #region Get Answers interactively
-    $data.parameters.Keys | ForEach-Object {
-        $q = [MoldQ]::new($data.parameters.$_)
-        $q.answer = Read-awesomeHost $q
-        $q.Key = $_
-        $result.add($q) | Out-Null
+    if ($PSBoundParameters.ContainsKey('AnswerFile')) {
+        Test-ValidateAnswerFileParameters -AnswerFile $AnswerFile -ManifestFile $MoldManifest
+        $AnswerContent = Get-Content -Raw $AnswerFile | ConvertFrom-Json
+        foreach ($Key in $data.parameters.keys) {
+            $q = [MoldQ]::new($data.parameters.$Key)
+            $TheAnswer = $AnswerContent | Where-Object { $_.Key -eq $Key }
+            $q.answer = $TheAnswer.Answer
+            $q.Key = $Key
+            $result.add($q) | Out-Null  
+        }
+    } else {
+        #region Get Answers interactively
+        $data.parameters.Keys | ForEach-Object {
+            $q = [MoldQ]::new($data.parameters.$_)
+            $q.answer = Read-awesomeHost $q
+            $q.Key = $_
+            $result.add($q) | Out-Null
+        }
     }
 
     $DataForScriptRunning = @{}
@@ -228,6 +241,105 @@ function Invoke-Mold {
         Write-Error 'Something went wrong while copying'
     }
     #endregion
+}
+<#
+.SYNOPSIS
+    Creates an answer file for a Mold template.
+
+.DESCRIPTION
+    This function generates a JSON file (`Mold_Answer_File.json`) in the specified directory to be used as an answer file for a Mold template. Answer File can be fed to "Invoke-Mold" to provide answer as JSON content and skip interactive questions. Useful during automations or non-console execution of Mold templates.
+
+.PARAMETER TemplatePath
+    The path to the Mold template directory. This parameter is mandatory when using the 'TemplatePath' parameter set.
+
+.PARAMETER Name
+    The name of the Mold template. This parameter is mandatory when using the 'Name' parameter set.
+
+.PARAMETER OutputDirectory
+    The path to the directory where the answer file will be created. Defaults to the current working directory.
+
+.PARAMETER Force
+    If specified, the function will overwrite an existing answer file without prompting.
+
+.EXAMPLE
+    New-MoldAnswerFile -TemplatePath 'C:\Templates\MyProject' -OutputDirectory 'C:\Answers'
+
+    Creates the answer file 'Mold_Answer_File.json' in the 'C:\Answers' directory based on the template in 'C:\Templates\MyProject'.
+
+.EXAMPLE
+    New-MoldAnswerFile -Name 'MyTemplate'
+
+    Creates the answer file 'Mold_Answer_File.json' in the current working directory based on the template named 'MyTemplate'.
+
+.NOTES
+    The function retrieves the template either by path or by name.
+    It reads the template's manifest file ('MoldManifest.json') to determine the questions and their types.
+    It generates an answer file with placeholders for user responses, including question details like caption, description, and available options. Fill the answer file manually before feeding it to Invoke-Mold command.
+    The generated answer file can be used to automate the input process when invoking the Mold template.
+#>
+function New-MoldAnswerFile {
+    [CmdletBinding()]
+    param (
+        [Parameter(ParameterSetName = 'TemplatePath', Mandatory = $true)]
+        [ValidateNotNullOrEmpty()] 
+        [string]$TemplatePath,
+        [Parameter(ParameterSetName = 'Name', Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Name,
+        [string]$OutputDirectory = (Get-Location).Path,
+        [switch]$Force
+    )
+    if ($PSBoundParameters.ContainsKey('Name')) {
+        $TemplateDetails = Get-MoldTemplate -Name $Name
+        if ($TemplateDetails.ManifestFile) {
+            $TemplatePath = Split-Path -Path $TemplateDetails.ManifestFile -Parent
+        } else {
+            Write-Error "No Mold Template found by name $Name" -ErrorAction Stop
+        }
+    }
+
+    # Validate MoldTemplate
+    Test-MoldHealth -Path $TemplatePath
+    $MoldManifest = Join-Path -Path $TemplatePath -ChildPath 'MoldManifest.json'
+
+    $data = Get-Content -Path $MoldManifest -Raw | ConvertFrom-Json
+    $Answer = New-Object System.Collections.ArrayList
+
+    function GetMyOptionsForQuestion {
+        param(
+            $data
+        )
+        if ($data.Type -eq 'TEXT') {
+            if ($data.Default -eq 'MANDATORY') {
+                $Output = 'Non Empty String'
+            } else {
+                $Output = 'Any string value'
+            }
+        }
+        if ($data.Type -eq 'CHOICE') {
+            $Output = $data.CHOICE.PSObject.Properties.Name -join ','
+        }
+        return $Output
+    }
+
+    $data.parameters.PSObject.Properties.Name | ForEach-Object {
+        
+        $AnsObj = [ordered]@{
+            Key         = $_
+            Caption     = $data.parameters.$_.Caption
+            Description = $data.parameters.$_.Message
+            Options     = GetMyOptionsForQuestion $data.parameters.$_
+            Answer      = 'YOUR_ANSWER'
+        }
+        $Answer.Add($AnsObj) | Out-Null
+    }
+ 
+    if (Test-Path -Path $OutputDirectory -PathType Container ) {
+        $AnswerFile = Join-Path -Path $OutputDirectory -ChildPath 'Mold_Answer_File.json'
+        $Answer | ConvertTo-Json | Out-File -FilePath $AnswerFile -Force:$Force
+    } else {
+        Write-Error "Given $OutputDirectory is not present or accessible" -ErrorAction Stop
+    }
 }
 <#
 .SYNOPSIS
@@ -395,8 +507,9 @@ $TemplateName_ScriptBlock = {
 }
 Register-ArgumentCompleter -CommandName Get-MoldTemplate -ParameterName Name -ScriptBlock $TemplateName_ScriptBlock
 Register-ArgumentCompleter -CommandName Invoke-Mold -ParameterName Name -ScriptBlock $TemplateName_ScriptBlock
+Register-ArgumentCompleter -CommandName New-MoldAnswerFile -ParameterName Name -ScriptBlock $TemplateName_ScriptBlock
 class MoldQ {
-    #TODO Make certain things as mandatory
+    #TODO Mandatory parameters in class
     [string]$Type
     [string]$Key
     [string]$Caption
@@ -636,6 +749,22 @@ function Test-ValidMoldManifestFile {
     } else {
         Write-Verbose "Failed json test : $ManifestPath"
         return $false
+    }
+}
+function Test-ValidateAnswerFileParameters {
+    [CmdletBinding()]
+    param (
+        [string]$AnswerFile,
+        [string]$ManifestFile
+    )
+    $AnswerFile, $ManifestFile | ForEach-Object {
+        if (-not(Test-Path $_)) { Write-Error "$_ not found or accessible" -ErrorAction Stop }
+    }
+    $AnswerData = Get-Content -Raw -Path $AnswerFile | ConvertFrom-Json -ErrorAction Stop
+    $ManifestData = Get-Content -Raw -Path $ManifestFile | ConvertFrom-Json -ErrorAction Stop
+
+    $ManifestData.parameters.PSObject.Properties.Name | ForEach-Object {
+        if ($AnswerData.Key -notcontains $_) { Write-Error "$_ is missing in Answer File" }
     }
 }
 

@@ -15,10 +15,13 @@
    The path where the generated project or file will be created. Defaults to the current working directory.
 
 .PARAMETER AnswerFile
-   The path to an answer file containing pre-filled responses to template questions. (Not yet implemented)
+   The path to an answer file containing pre-filled responses to template questions. Use New-MoldAnswerFile to generate the answer file skeleton for a given template.
 
 .EXAMPLE
    Invoke-Mold -TemplatePath 'C:\Templates\MyProject'
+
+   .EXAMPLE
+   Invoke-Mold -TemplatePath 'C:\Templates\MyProject' -AnswerFile GoldProject.json
 
    Creates a new project based on the template located at 'C:\Templates\MyProject'. The user will be prompted for input to customize the project.
 
@@ -42,7 +45,6 @@ function Invoke-Mold {
         [ValidateNotNullOrEmpty()]
         [string]$Name,
         [string]$DestinationPath = (Get-Location).Path,
-        #TODO Provide input as answerfile
         [string]$AnswerFile
     )
     
@@ -62,12 +64,24 @@ function Invoke-Mold {
     $data = Get-Content -Raw $MoldManifest | ConvertFrom-Json -AsHashtable
     $result = New-Object System.Collections.arrayList
 
-    #region Get Answers interactively
-    $data.parameters.Keys | ForEach-Object {
-        $q = [MoldQ]::new($data.parameters.$_)
-        $q.answer = Read-awesomeHost $q
-        $q.Key = $_
-        $result.add($q) | Out-Null
+    if ($PSBoundParameters.ContainsKey('AnswerFile')) {
+        Test-ValidateAnswerFileParameters -AnswerFile $AnswerFile -ManifestFile $MoldManifest
+        $AnswerContent = Get-Content -Raw $AnswerFile | ConvertFrom-Json
+        foreach ($Key in $data.parameters.keys) {
+            $q = [MoldQ]::new($data.parameters.$Key)
+            $TheAnswer = $AnswerContent | Where-Object { $_.Key -eq $Key }
+            $q.answer = $TheAnswer.Answer
+            $q.Key = $Key
+            $result.add($q) | Out-Null  
+        }
+    } else {
+        #region Get Answers interactively
+        $data.parameters.Keys | ForEach-Object {
+            $q = [MoldQ]::new($data.parameters.$_)
+            $q.answer = Read-awesomeHost $q
+            $q.Key = $_
+            $result.add($q) | Out-Null
+        }
     }
 
     $DataForScriptRunning = @{}

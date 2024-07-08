@@ -12,3 +12,4 @@ $TemplateName_ScriptBlock = {
 }
 Register-ArgumentCompleter -CommandName Get-MoldTemplate -ParameterName Name -ScriptBlock $TemplateName_ScriptBlock
 Register-ArgumentCompleter -CommandName Invoke-Mold -ParameterName Name -ScriptBlock $TemplateName_ScriptBlock
+Register-ArgumentCompleter -CommandName New-MoldAnswerFile -ParameterName Name -ScriptBlock $TemplateName_ScriptBlock
