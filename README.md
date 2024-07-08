@@ -1,35 +1,11 @@
 # Mold
 
+[![ModuleTools@PowerShell Gallery][BadgeIOCount]][PSGalleryLink]
+![WorkFlow Status][WorkFlowStatus]
+
 Mold is a fast and powerful templating and cloning engine for PowerShell (and beyond!)
 
-## Pending
-
-- [ ] Build PSData Extension logic just like `plaster`
-- [ ] JSON Schema and validation
-
-> [!WARNING]
-> MAKE IT PS 5.1 Compatible
-
-## Complete
-
-- `New-MoldManifest` : Can generate MoldManifest.json easily
-- `Update-MoldManifest` : Can update existing MoldManifest.json
-- `Invoke-Mold` : Main command to involke mold template
-- `Get-MoldTemplates` : Get all mold templates
-- Both Invoke and Get now supports autocompletition by NAME
-- Load local Templates using env path (; Semicolon seaparted folder path) - MOLD_TEMPLATES
-- [X] Ask for project details while create template
-- [X] Invoke MOLD by name instead of path
-
-### In-Progress - Pending
-
-Absolutely! Here's a README file that incorporates the details of the PowerShell functions we've discussed, along with explanations to help users understand and utilize the code.
-
----
-
-# Mold PowerShell Module
-
-This PowerShell module provides a set of functions to streamline the creation, management, and usage of Mold templates. Mold is a powerful tool for generating projects and files from customizable templates.
+This PowerShell module provides a set of functions to streamline the creation, management, and usage of Mold templates. 
 
 ## Features
 
@@ -37,6 +13,11 @@ This PowerShell module provides a set of functions to streamline the creation, m
 * **Update-MoldManifest:** Automatically updates an existing `MoldManifest.json` file to match the latest changes in the template.
 * **Get-MoldTemplate:** Retrieves Mold templates from various sources, including local directories and path environment variable (MOLD_TEMPLATES). 
 * **Invoke-Mold:** Executes a Mold template to generate a project or file.
+
+## Roadmap
+
+- [ ] Build PSData Extension logic just like `plaster`
+- [ ] JSON Schema and validation
 
 ## Installation
 
@@ -128,3 +109,7 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 ## License
 
 This project is licensed under the [MIT License](./LICENSE).
+
+[BadgeIOCount]: https://img.shields.io/powershellgallery/dt/Mold?label=Mold%40PowerShell%20Gallery
+[PSGalleryLink]: https://www.powershellgallery.com/packages/Mold/
+[WorkFlowStatus]: https://img.shields.io/github/actions/workflow/status/belibug/Mold/Tests.yml
