@@ -2,7 +2,7 @@ Dear <% MOLD_TEXT_StudentName %>,
 
 Hope you are doing well! 
 
-Passed : <% MOLD_TEXT_PASSED %>
+Passed : <% MOLD_CHOICE_PASSED %>
 
 Thank you,
 <% MOLD_TEXT_Myself %>

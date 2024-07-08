@@ -33,6 +33,14 @@ MOLD does not handle file renaming, command execution, or complex directory/file
 
 In essence, MOLD's primary function is to gather user responses to a set of questions. The subsequent actions taken with these responses are entirely up to the user. Advanced logic and custom functionalities can be implemented within the MOLD_SCRIPT.ps1 script, which is invoked as part of the Invoke-Mold command. This approach provides users with a high degree of flexibility and customization.
 
+## PowerShell Core only
+
+Despite my best efforts, ensuring compatibility with older versions has proven to be impractical. Prioritizing simplicity in the project code is essential to avoid excessive if/else logic, which can introduce bugs and complicate maintenance. Unfortunately, my attempts to achieve compatibility with PowerShell 5.1 have negatively impacted the experience in PowerShell 7. Key compatibility issues include:
+
+1. The absence of the `-AsHashtable` switch in the `ConvertFrom-Json` command. I prefer to work with hashtables due to their efficiency and did not want to rely on external libraries to support this functionality.
+2. Although I developed a function to convert nested `PSObject` instances to hashtables, it failed to preserve the order, thereby disrupting the sequence of questions, which is crucial to maintain.
+3. The lack of the `Test-Json` command is a significant limitation. Parsing and validating JSON against a schema is beyond the scope of this module.
+
 ## Constraints and Mitigation Strategies
 
 ### Identifying Text Files
