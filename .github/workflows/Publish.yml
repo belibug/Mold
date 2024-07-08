@@ -1,0 +1,41 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Publish to Packages
+
+# Controls when the workflow will run
+on:
+  push:
+    tags:
+      - '*'
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ModuleTools module form PSGallery
+        run: |
+          Install-PSResource -Repository PSGallery -Name ModuleTools -TrustRepository
+        shell: pwsh
+
+      - name: Build Module
+        run: Invoke-MTBuild -Verbose
+        shell: pwsh
+
+      - name: Run Pester Tests
+        run: Invoke-MTTest
+        shell: pwsh
+
+      - name: List files
+        run: Get-ChildItem ./dist -Recurse
+        shell: pwsh
+
+      - name: Publish Package to Github
+        run: |
+          Publish-PSResource -Path ./dist/Mold -Repository PSGallery -ApiKey $Env:ApiKey
+        env:
+          ApiKey: ${{ secrets.PSGALLERY_API }}
+        shell: pwsh

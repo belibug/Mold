@@ -1,0 +1,30 @@
+name: Run Tests
+
+# Controls when the workflow will run
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ModuleTools module form PSGallery
+        run: |
+          Install-PSResource -Repository PSGallery -Name ModuleTools -TrustRepository
+        shell: pwsh
+
+      - name: Build Module
+        run: Invoke-MTBuild -Verbose
+        shell: pwsh
+
+      - name: Run Pester Tests
+        run: Invoke-MTTest
+        shell: pwsh
