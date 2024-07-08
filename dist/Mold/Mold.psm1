@@ -58,9 +58,9 @@ function Get-MoldTemplate {
    if ($PSBoundParameters.ContainsKey('Name')) {
       $TemplateByName = Get-MoldTemplate | Where-Object { $_.Name -eq $Name }
       if ($TemplateByName) {
-         return $TemplateByName 
+         return $TemplateByName
       } else {
-         Write-Warning "Did not find any template named $Name" 
+         Write-Warning "Did not find any template named $Name"
          return
       }
    }
@@ -129,7 +129,7 @@ function Invoke-Mold {
     [CmdletBinding()]
     param (
         [Parameter(ParameterSetName = 'TemplatePath', Mandatory = $true)]
-        [ValidateNotNullOrEmpty()] 
+        [ValidateNotNullOrEmpty()]
         [string]$TemplatePath,
         [Parameter(ParameterSetName = 'Name', Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -137,7 +137,7 @@ function Invoke-Mold {
         [string]$DestinationPath = (Get-Location).Path,
         [string]$AnswerFile
     )
-    
+
     if ($PSBoundParameters.ContainsKey('Name')) {
         $TemplateDetails = Get-MoldTemplate -Name $Name
         if ($TemplateDetails.ManifestFile) {
@@ -155,14 +155,14 @@ function Invoke-Mold {
     $result = New-Object System.Collections.arrayList
 
     if ($PSBoundParameters.ContainsKey('AnswerFile')) {
-        Test-ValidateAnswerFileParameters -AnswerFile $AnswerFile -ManifestFile $MoldManifest
+        Test-ValidateAnswerFileParameter -AnswerFile $AnswerFile -ManifestFile $MoldManifest
         $AnswerContent = Get-Content -Raw $AnswerFile | ConvertFrom-Json
         foreach ($Key in $data.parameters.keys) {
             $q = [MoldQ]::new($data.parameters.$Key)
             $TheAnswer = $AnswerContent | Where-Object { $_.Key -eq $Key }
             $q.answer = $TheAnswer.Answer
             $q.Key = $Key
-            $result.add($q) | Out-Null  
+            $result.add($q) | Out-Null
         }
     } else {
         #region Get Answers interactively
@@ -206,7 +206,7 @@ function Invoke-Mold {
             $MOLDParam = '<% MOLD_{0}_{1} %>' -f $_.Type, $_.Key
             $EachFileContent = $EachFileContent -replace $MOLDParam, $_.Answer
         }
-        
+
         #TODO instead of regex replace which is leaving blank line, use line delete option
         $result | Where-Object { $_.Type -eq 'BLOCK' } | ForEach-Object {
             $BlockStart = '<% MOLD_{0}_{1}_{2} %>' -f $_.Type, $_.Key, 'START'
@@ -218,7 +218,7 @@ function Invoke-Mold {
                 $EachFileContent = $EachFileContent -replace "(?s)$BlockStart.*?$BlockEnd", $null
             }
         }
-        Out-File -FilePath $_ -InputObject $EachFileContent 
+        Out-File -FilePath $_ -InputObject $EachFileContent
     }
 
     if (-not (Test-Path $DestinationPath -PathType Container)) {
@@ -234,8 +234,8 @@ function Invoke-Mold {
     #endregion
 
     # Copy all files to destination
-    try { 
-        Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force -ErrorAction Stop 
+    try {
+        Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force -ErrorAction Stop
     } catch {
         $Error[0]
         Write-Error 'Something went wrong while copying'
@@ -278,10 +278,10 @@ function Invoke-Mold {
     The generated answer file can be used to automate the input process when invoking the Mold template.
 #>
 function New-MoldAnswerFile {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(ParameterSetName = 'TemplatePath', Mandatory = $true)]
-        [ValidateNotNullOrEmpty()] 
+        [ValidateNotNullOrEmpty()]
         [string]$TemplatePath,
         [Parameter(ParameterSetName = 'Name', Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -323,7 +323,7 @@ function New-MoldAnswerFile {
     }
 
     $data.parameters.PSObject.Properties.Name | ForEach-Object {
-        
+
         $AnsObj = [ordered]@{
             Key         = $_
             Caption     = $data.parameters.$_.Caption
@@ -333,7 +333,7 @@ function New-MoldAnswerFile {
         }
         $Answer.Add($AnsObj) | Out-Null
     }
- 
+
     if (Test-Path -Path $OutputDirectory -PathType Container ) {
         $AnswerFile = Join-Path -Path $OutputDirectory -ChildPath 'Mold_Answer_File.json'
         $Answer | ConvertTo-Json | Out-File -FilePath $AnswerFile -Force:$Force
@@ -361,7 +361,7 @@ function New-MoldAnswerFile {
 #>
 
 function New-MoldManifest {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory)]
         [string]
@@ -372,8 +372,8 @@ function New-MoldManifest {
     Test-MoldStatus -Path $Path -NewManifest
 
     ## Find Parameters
-    $PlaceHolders = Get-MoldPlaceHolders -Path $Path
-   
+    $PlaceHolders = Get-MoldPlaceHolder -Path $Path
+
     $MetaQuestions = Get-Content -Raw "$PSScriptRoot\resources\NewMoldQuestions.json" | ConvertFrom-Json -AsHashtable
     $MetaResult = @{}
 
@@ -415,7 +415,7 @@ function Test-MoldTemplate {
     param (
         [string]$TemplatePath
     )
-    Write-Warning 'Code Not implemented for Test-MoldTemplate'
+    Write-Warning "ode Not implemented for Test-MoldTemplate $TemplatePath"
 }
 <#
 .SYNOPSIS
@@ -437,7 +437,7 @@ function Test-MoldTemplate {
 #>
 
 function Update-MoldManifest {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory)]
         [string]
@@ -449,9 +449,9 @@ function Update-MoldManifest {
     $ChangesMade = 0
 
     $data = Get-Content -Raw $MoldManifest | ConvertFrom-Json -AsHashtable
-    
-    $AllPaceholders = Get-MoldPlaceHolders -Path $TemplatePath
-    
+
+    $AllPaceholders = Get-MoldPlaceHolder -Path $TemplatePath
+
     # Checking PlaceHolders against MoldManifest - to add/update variables
     $AllPaceholders | ForEach-Object {
         $PhType, $PhName, $Extra = $_.split('_')
@@ -490,7 +490,7 @@ function Update-MoldManifest {
         $result = $data | ConvertTo-Json -Depth 5 -ErrorAction Stop
         Out-File -InputObject $result -FilePath $MoldManifest -Encoding utf8 -ErrorAction Stop
     } else {
-        Write-Host 'No changes found in templatePath, MoldManifest unchanged' 
+        Write-Host 'No changes found in templatePath, MoldManifest unchanged'
     }
 }
 $TemplateName_ScriptBlock = {
@@ -500,9 +500,9 @@ $TemplateName_ScriptBlock = {
         $wordToComplete,
         $commandAst,
         $fakeBoundParameters )
-    
+
     $commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters | Out-Null
-    $presetData = Get-MoldTemplate 
+    $presetData = Get-MoldTemplate
     $presetData.Name | Where-Object { $_ -like "$wordToComplete*" }
 }
 Register-ArgumentCompleter -CommandName Get-MoldTemplate -ParameterName Name -ScriptBlock $TemplateName_ScriptBlock
@@ -574,7 +574,7 @@ function GenerateQuestion {
     }
     return $question
 }
-function Get-MoldPlaceHolders {
+function Get-MoldPlaceHolder {
     param (
         [Parameter(Mandatory)]
         [string]
@@ -583,7 +583,7 @@ function Get-MoldPlaceHolders {
 
     $Files = Get-ChildItem -Path $Path -File -Recurse -Exclude 'MOLD_SCRIPT.ps1'
     $PlaceHolders = @()
-    $Files | 
+    $Files |
     Where-Object { $_.Length -lt 1MB } | #HACK, easy way to avoid reading large files which will slow down program
     ForEach-Object {
         Write-Verbose "Processing File $_"
@@ -609,6 +609,7 @@ function Get-MoldPlaceHolders {
     return $PlaceHolders
 }
 function Get-TemplatesFromPath {
+    [OutputType([System.Collections.ArrayList])]
     [CmdletBinding()]
     param (
         [Parameter()]
@@ -620,7 +621,7 @@ function Get-TemplatesFromPath {
     $Output = New-Object System.Collections.ArrayList
 
     $MMFiles = Get-ChildItem -Path $Path -Filter 'MoldManifest.json' -Recurse:$Recurse
-    if (-not $MMFiles) { 
+    if (-not $MMFiles) {
         Write-Verbose "No MoldManifest files found in given $path"
         return $null
     }
@@ -648,19 +649,19 @@ function Invoke-MoldScriptFile {
         [string]$ScriptPath,
         [string]$WorkingDirectory
     )
-    if (-not (Test-Path $MoldScriptFile)) {
+    if (-not (Test-Path $ScriptPath)) {
         Write-Verbose 'No MOLD_SCRIPT found in template directory, Ignoring script run'
         return
     }
     Push-Location -StackName 'MoldScriptExecution'
-    if (-not (Test-Path $WorkingDirectory)) { 
+    if (-not (Test-Path $WorkingDirectory)) {
         Write-Error 'Destination path not accessible, unable to run MOLD_SCRIPT' -ErrorAction Stop
     }
     Set-Location $WorkingDirectory
     Invoke-Command -ScriptBlock {
         param([hashtable]$MoldData, [string]$scriptPath)
         & $scriptPath -MoldData $MoldData
-    } -ArgumentList $MoldData , $MoldScriptFile
+    } -ArgumentList $MoldData , $ScriptPath
     Pop-Location -StackName 'MoldScriptExecution'
 }
 function Read-AwesomeHost {
@@ -680,7 +681,7 @@ function Read-AwesomeHost {
         } else {
             $result = $response.Values
         }
-    } 
+    }
     ## For Choice based
     if ($Ask.Type -eq 'CHOICE' -or $Ask.Type -eq 'BLOCK') {
         $Cs = @()
@@ -737,6 +738,7 @@ function Test-MoldStatus {
     }
 }
 function Test-ValidMoldManifestFile {
+    [OutputType([bool])]
     [CmdletBinding()]
     param (
         $ManifestPath
@@ -751,7 +753,7 @@ function Test-ValidMoldManifestFile {
         return $false
     }
 }
-function Test-ValidateAnswerFileParameters {
+function Test-ValidateAnswerFileParameter {
     [CmdletBinding()]
     param (
         [string]$AnswerFile,

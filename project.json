@@ -1,7 +1,7 @@
 {
   "ProjectName": "Mold",
   "Description": "Mold is a fast and powerful templating and cloning engine for PowerShell (and beyond!)",
-  "Version": "0.0.3",
+  "Version": "0.0.4",
   "Manifest": {
     "Author": "Manjunath Beli",
     "PowerShellHostVersion": "7.4",

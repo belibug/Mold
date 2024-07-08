@@ -1,4 +1,0 @@
-<% MOLD_TEXT_ForText %>
-<% MOLD_CHOICE_ForChoice %>
-<% MOLD_BLOCK_ForBlock_START %>
-<% MOLD_BLOCK_ForBlock_END %>

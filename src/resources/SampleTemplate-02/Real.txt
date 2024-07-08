@@ -1,4 +1,0 @@
-Hello <% MOLD_TEXT_YourName %> 
-It can be a simple text file as well!
-
-My favourite editor is <% MOLD_CHOICE_FavEditor %>

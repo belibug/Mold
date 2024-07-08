@@ -1,32 +1,31 @@
 {
   "metadata": {
-    "name": "sample2",
+    "name": "AppStatus",
     "version": "0.0.1",
-    "title": "Sample 2",
-    "description": "MOLD Template 2nd",
-    "guid": "e53ac2b7-669e-4228-bfb9-131d5a2db56a",
-    "FileTypes": "ps1, txt, md, json, xml, psm1, psd1",
-    "LiteralFile": "config"
+    "title": "Appilcation Status letter",
+    "description": "MOLD Template",
+    "guid": "6afd0c68-1beb-4210-aa0b-79895cf239ce",
+    "FileTypes": "txt",
+    "LiteralFile": ""
   },
   "parameters": {
-    "YourName": {
-      "Caption": "YourName",
-      "Message": "Whats your name?",
+    "StudenName": {
+      "Caption": "StudenName",
+      "Message": "Whats the student Name?",
       "Prompt": "Response",
       "Type": "TEXT",
       "Default": "MANDATORY"
     },
-    "FavEditor": {
-      "Caption": "FavEditor",
-      "Message": "What is your favourite editor?",
+    "ApplicationStatus": {
+      "Caption": "ApplicationStatus",
+      "Message": "Choose One",
       "Prompt": "Response",
       "Type": "CHOICE",
-      "Default": "Others",
+      "Default": "Default",
       "Choice": {
-        "nvim": "VIM forever",
-        "code": "Extension extravagenza",
-        "notepad++": "Simplicity old schooler",
-        "Others": "Goes with wind!"
+        "Accepted": "Application has been accepted",
+        "Denied": "Application has been denied",
+        "KeptOnHold": "Kept on hold for further review"
       }
     }
   }
