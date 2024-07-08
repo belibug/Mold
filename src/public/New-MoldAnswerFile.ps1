@@ -34,10 +34,10 @@
     The generated answer file can be used to automate the input process when invoking the Mold template.
 #>
 function New-MoldAnswerFile {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(ParameterSetName = 'TemplatePath', Mandatory = $true)]
-        [ValidateNotNullOrEmpty()] 
+        [ValidateNotNullOrEmpty()]
         [string]$TemplatePath,
         [Parameter(ParameterSetName = 'Name', Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -79,7 +79,7 @@ function New-MoldAnswerFile {
     }
 
     $data.parameters.PSObject.Properties.Name | ForEach-Object {
-        
+
         $AnsObj = [ordered]@{
             Key         = $_
             Caption     = $data.parameters.$_.Caption
@@ -89,7 +89,7 @@ function New-MoldAnswerFile {
         }
         $Answer.Add($AnsObj) | Out-Null
     }
- 
+
     if (Test-Path -Path $OutputDirectory -PathType Container ) {
         $AnswerFile = Join-Path -Path $OutputDirectory -ChildPath 'Mold_Answer_File.json'
         $Answer | ConvertTo-Json | Out-File -FilePath $AnswerFile -Force:$Force

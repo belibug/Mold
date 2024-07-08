@@ -1,4 +1,4 @@
-function Get-MoldPlaceHolders {
+function Get-MoldPlaceHolder {
     param (
         [Parameter(Mandatory)]
         [string]
@@ -7,7 +7,7 @@ function Get-MoldPlaceHolders {
 
     $Files = Get-ChildItem -Path $Path -File -Recurse -Exclude 'MOLD_SCRIPT.ps1'
     $PlaceHolders = @()
-    $Files | 
+    $Files |
     Where-Object { $_.Length -lt 1MB } | #HACK, easy way to avoid reading large files which will slow down program
     ForEach-Object {
         Write-Verbose "Processing File $_"

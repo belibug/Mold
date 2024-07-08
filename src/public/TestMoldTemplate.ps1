@@ -3,5 +3,5 @@ function Test-MoldTemplate {
     param (
         [string]$TemplatePath
     )
-    Write-Warning 'Code Not implemented for Test-MoldTemplate'
+    Write-Warning "ode Not implemented for Test-MoldTemplate $TemplatePath"
 }

@@ -1,4 +1,5 @@
 function Test-ValidMoldManifestFile {
+    [OutputType([bool])]
     [CmdletBinding()]
     param (
         $ManifestPath

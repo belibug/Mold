@@ -1,5 +1,8 @@
 BeforeDiscovery {
-    $files = Get-ChildItem -Path .\src -Filter '*.ps1' -Recurse
+    $PrivFiles = Get-ChildItem -Path .\src\private -Filter '*.ps1' -Recurse
+    $PubFiles = Get-ChildItem -Path .\src\private -Filter '*.ps1' -Recurse
+    $files = $PrivFiles
+    $files += $PubFiles
 }
 BeforeAll {
     $ScriptAnalyzerSettings = @{
@@ -19,6 +22,6 @@ Describe 'File: <_.basename>' -ForEach $files {
         It 'passess ScriptAnalyzer' {
             $saResults = Invoke-ScriptAnalyzer -Path $_ -Settings $ScriptAnalyzerSettings
             $saResults | Should -BeNullOrEmpty -Because $($saResults.Message -join ';')
-        }         
+        }
     }
 }

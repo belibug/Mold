@@ -39,7 +39,7 @@ function Invoke-Mold {
     [CmdletBinding()]
     param (
         [Parameter(ParameterSetName = 'TemplatePath', Mandatory = $true)]
-        [ValidateNotNullOrEmpty()] 
+        [ValidateNotNullOrEmpty()]
         [string]$TemplatePath,
         [Parameter(ParameterSetName = 'Name', Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -47,7 +47,7 @@ function Invoke-Mold {
         [string]$DestinationPath = (Get-Location).Path,
         [string]$AnswerFile
     )
-    
+
     if ($PSBoundParameters.ContainsKey('Name')) {
         $TemplateDetails = Get-MoldTemplate -Name $Name
         if ($TemplateDetails.ManifestFile) {
@@ -65,14 +65,14 @@ function Invoke-Mold {
     $result = New-Object System.Collections.arrayList
 
     if ($PSBoundParameters.ContainsKey('AnswerFile')) {
-        Test-ValidateAnswerFileParameters -AnswerFile $AnswerFile -ManifestFile $MoldManifest
+        Test-ValidateAnswerFileParameter -AnswerFile $AnswerFile -ManifestFile $MoldManifest
         $AnswerContent = Get-Content -Raw $AnswerFile | ConvertFrom-Json
         foreach ($Key in $data.parameters.keys) {
             $q = [MoldQ]::new($data.parameters.$Key)
             $TheAnswer = $AnswerContent | Where-Object { $_.Key -eq $Key }
             $q.answer = $TheAnswer.Answer
             $q.Key = $Key
-            $result.add($q) | Out-Null  
+            $result.add($q) | Out-Null
         }
     } else {
         #region Get Answers interactively
@@ -116,7 +116,7 @@ function Invoke-Mold {
             $MOLDParam = '<% MOLD_{0}_{1} %>' -f $_.Type, $_.Key
             $EachFileContent = $EachFileContent -replace $MOLDParam, $_.Answer
         }
-        
+
         #TODO instead of regex replace which is leaving blank line, use line delete option
         $result | Where-Object { $_.Type -eq 'BLOCK' } | ForEach-Object {
             $BlockStart = '<% MOLD_{0}_{1}_{2} %>' -f $_.Type, $_.Key, 'START'
@@ -128,7 +128,7 @@ function Invoke-Mold {
                 $EachFileContent = $EachFileContent -replace "(?s)$BlockStart.*?$BlockEnd", $null
             }
         }
-        Out-File -FilePath $_ -InputObject $EachFileContent 
+        Out-File -FilePath $_ -InputObject $EachFileContent
     }
 
     if (-not (Test-Path $DestinationPath -PathType Container)) {
@@ -144,8 +144,8 @@ function Invoke-Mold {
     #endregion
 
     # Copy all files to destination
-    try { 
-        Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force -ErrorAction Stop 
+    try {
+        Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force -ErrorAction Stop
     } catch {
         $Error[0]
         Write-Error 'Something went wrong while copying'

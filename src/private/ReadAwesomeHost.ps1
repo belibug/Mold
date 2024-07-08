@@ -15,7 +15,7 @@ function Read-AwesomeHost {
         } else {
             $result = $response.Values
         }
-    } 
+    }
     ## For Choice based
     if ($Ask.Type -eq 'CHOICE' -or $Ask.Type -eq 'BLOCK') {
         $Cs = @()

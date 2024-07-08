@@ -1,4 +1,5 @@
 function Get-TemplatesFromPath {
+    [OutputType([System.Collections.ArrayList])]
     [CmdletBinding()]
     param (
         [Parameter()]
@@ -10,7 +11,7 @@ function Get-TemplatesFromPath {
     $Output = New-Object System.Collections.ArrayList
 
     $MMFiles = Get-ChildItem -Path $Path -Filter 'MoldManifest.json' -Recurse:$Recurse
-    if (-not $MMFiles) { 
+    if (-not $MMFiles) {
         Write-Verbose "No MoldManifest files found in given $path"
         return $null
     }

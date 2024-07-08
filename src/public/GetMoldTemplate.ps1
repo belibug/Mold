@@ -58,9 +58,9 @@ function Get-MoldTemplate {
    if ($PSBoundParameters.ContainsKey('Name')) {
       $TemplateByName = Get-MoldTemplate | Where-Object { $_.Name -eq $Name }
       if ($TemplateByName) {
-         return $TemplateByName 
+         return $TemplateByName
       } else {
-         Write-Warning "Did not find any template named $Name" 
+         Write-Warning "Did not find any template named $Name"
          return
       }
    }

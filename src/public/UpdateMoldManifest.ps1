@@ -18,7 +18,7 @@
 #>
 
 function Update-MoldManifest {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory)]
         [string]
@@ -30,9 +30,9 @@ function Update-MoldManifest {
     $ChangesMade = 0
 
     $data = Get-Content -Raw $MoldManifest | ConvertFrom-Json -AsHashtable
-    
-    $AllPaceholders = Get-MoldPlaceHolders -Path $TemplatePath
-    
+
+    $AllPaceholders = Get-MoldPlaceHolder -Path $TemplatePath
+
     # Checking PlaceHolders against MoldManifest - to add/update variables
     $AllPaceholders | ForEach-Object {
         $PhType, $PhName, $Extra = $_.split('_')
@@ -71,6 +71,6 @@ function Update-MoldManifest {
         $result = $data | ConvertTo-Json -Depth 5 -ErrorAction Stop
         Out-File -InputObject $result -FilePath $MoldManifest -Encoding utf8 -ErrorAction Stop
     } else {
-        Write-Host 'No changes found in templatePath, MoldManifest unchanged' 
+        Write-Host 'No changes found in templatePath, MoldManifest unchanged'
     }
 }

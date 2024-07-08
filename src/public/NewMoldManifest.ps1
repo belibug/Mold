@@ -18,7 +18,7 @@
 #>
 
 function New-MoldManifest {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory)]
         [string]
@@ -29,8 +29,8 @@ function New-MoldManifest {
     Test-MoldStatus -Path $Path -NewManifest
 
     ## Find Parameters
-    $PlaceHolders = Get-MoldPlaceHolders -Path $Path
-   
+    $PlaceHolders = Get-MoldPlaceHolder -Path $Path
+
     $MetaQuestions = Get-Content -Raw "$PSScriptRoot\resources\NewMoldQuestions.json" | ConvertFrom-Json -AsHashtable
     $MetaResult = @{}
 

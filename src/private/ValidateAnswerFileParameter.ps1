@@ -1,4 +1,4 @@
-function Test-ValidateAnswerFileParameters {
+function Test-ValidateAnswerFileParameter {
     [CmdletBinding()]
     param (
         [string]$AnswerFile,

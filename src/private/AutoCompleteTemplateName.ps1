@@ -5,9 +5,9 @@ $TemplateName_ScriptBlock = {
         $wordToComplete,
         $commandAst,
         $fakeBoundParameters )
-    
+
     $commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters | Out-Null
-    $presetData = Get-MoldTemplate 
+    $presetData = Get-MoldTemplate
     $presetData.Name | Where-Object { $_ -like "$wordToComplete*" }
 }
 Register-ArgumentCompleter -CommandName Get-MoldTemplate -ParameterName Name -ScriptBlock $TemplateName_ScriptBlock
