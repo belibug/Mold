@@ -1,13 +1,36 @@
-# Mold
+<div align="center" width="100%">
+    <h1>Mold</h1><h4>📃 Effortless Templating with PowerShell 📃</h4>
+    <p>Craft templates effortlessly, for any language, on any platform. Mold makes it happen! ✨</p><p>
+    <a target="_blank" href="https://github.com/belibug"><img src="https://img.shields.io/badge/maintainer-BELI-orange" /></a>
+    <a target="_blank" href="https://GitHub.com/belibug/Mold/graphs/contributors/"><img src="https://img.shields.io/github/contributors/belibug/Mold.svg" /></a><br>
+    <a target="_blank" href="https://GitHub.com/belibug/Mold/commits/"><img src="https://img.shields.io/github/last-commit/belibug/Mold.svg" /></a>
+    <a target="_blank" href="https://GitHub.com/belibug/Mold/issues/"><img src="https://img.shields.io/github/issues/belibug/Mold.svg" /></a>
+    <a target="_blank" href="https://github.com/belibug/Mold/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed/belibug/Mold.svg" /></a><br>
+</div>
+**MOLD**: Inspired by Plaster, the PowerShell template and scaffolding engine that lets you effortlessly craft templates for any language, on any platform. 🚀 Deploy in a flash with interactive prompts or answer files – your choice! ✨
 
-[![ModuleTools@PowerShell Gallery][BadgeIOCount]][PSGalleryLink]
+[![Mold@PowerShell Gallery][BadgeIOCount]][PSGalleryLink]
 ![WorkFlow Status][WorkFlowStatus]
 
-Mold is a fast and powerful templating and cloning engine for PowerShell (and beyond!)
+## Description
 
-This PowerShell module provides a set of functions to streamline the creation, management, and usage of Mold templates. 
+Mold operates on Mold Templates,which can be generated using Mold commands (that means you dont have to learn a new sytnax or deal with xml files)
 
-## Features
+## How MOLD Works ✨
+
+```mermaid
+flowchart TD
+    A[Template Raw Content] --> B[Add Placeholders]
+    B --> C[Build Mold Template]
+    C --> D{DEPLOY Invoke-Mold}
+    D --> E[Interactive Prompt]
+    D --> F[Answer File]
+    F --> G[File / Project Output]
+    E --> G
+```
+
+
+##Features
 
 * **New-MoldManifest:** Creates a `MoldManifest.json` file for a new Mold template, defining its metadata and parameters.
 * **Update-MoldManifest:** Automatically updates an existing `MoldManifest.json` file to match the latest changes in the template.
@@ -35,7 +58,7 @@ This PowerShell module provides a set of functions to streamline the creation, m
    ```powershell
    New-MoldManifest -Path 'C:\path\to\your\template'
    ```
-You'll be interactively prompted to provide information about your template.
+   You'll be interactively prompted to provide information about your template.
 
 ### Updating a Template
 
