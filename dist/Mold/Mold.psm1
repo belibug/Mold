@@ -199,7 +199,14 @@ function Invoke-Mold {
             # process only text that is in UTF8 encoding
             $EachFileContent = Get-Content $_ -Raw -Encoding 'UTF8' -ErrorAction Stop
         } catch {
-            break
+            return
+        }
+        # only process files that have placeholders
+        if ($EachFileContent -match '<% MOLD_\w+\w+ %>') { 
+            Write-Verbose "Processing $_"
+        } else {
+            Write-Verbose "$_ doesnt have any match, skipping"
+            return
         }
 
         $result | Where-Object { $_.Type -ne 'BLOCK' } | ForEach-Object {

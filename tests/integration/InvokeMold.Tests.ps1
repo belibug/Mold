@@ -2,9 +2,9 @@ BeforeAll {
     Import-Module .\dist\Mold -Force -ErrorAction Stop
 }
 
-Describe 'Invoke Mold Integration Test' {
+Describe 'Invoke Mold Integration Test' -Tag 'a1' {
     BeforeAll {
-        $Answer = '[{"Key":"StudenName","Caption":"StudenName","Description":"Whats the student Name?","Options":"Non Empty String","Answer":"Manju Beli"},{"Key":"ApplicationStatus","Caption":"ApplicationStatus","Description":"Choose One","Options":"Accepted,Denied,KeptOnHold","Answer":"Accpeted"}]'
+        $Answer = '[{"Key":"StudenName","Caption":"StudenName","Description":"Whats the student Name?","Options":"Non Empty String","Answer":"Manju Beli"},{"Key":"ApplicationStatus","Caption":"ApplicationStatus","Description":"Choose One","Options":"Accepted, Denied, KeptOnHold","Answer":"Accpeted"}]'
         $AnswerFilePath = 'TestDrive:\Answer.json'
         Set-Content -Path $AnswerFilePath -Value $Answer
         # Invoke-Mold -Name AppStatus -AnswerFile
