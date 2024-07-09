@@ -135,7 +135,8 @@ function Invoke-Mold {
         [ValidateNotNullOrEmpty()]
         [string]$Name,
         [string]$DestinationPath = (Get-Location).Path,
-        [string]$AnswerFile
+        [string]$AnswerFile,
+        [switch]$Force
     )
 
     if ($PSBoundParameters.ContainsKey('Name')) {
@@ -205,7 +206,7 @@ function Invoke-Mold {
         if ($EachFileContent -match '<% MOLD_\w+\w+ %>') { 
             Write-Verbose "Processing $_"
         } else {
-            Write-Verbose "$_ doesnt have any match, skipping"
+            Write-Verbose "$_ doesnt have any placeholders, skipping"
             return
         }
 
@@ -214,7 +215,6 @@ function Invoke-Mold {
             $EachFileContent = $EachFileContent -replace $MOLDParam, $_.Answer
         }
 
-        #TODO instead of regex replace which is leaving blank line, use line delete option
         $result | Where-Object { $_.Type -eq 'BLOCK' } | ForEach-Object {
             $BlockStart = '<% MOLD_{0}_{1}_{2} %>' -f $_.Type, $_.Key, 'START'
             $BlockEnd = '<% MOLD_{0}_{1}_{2} %>' -f $_.Type, $_.Key, 'END'
@@ -225,7 +225,8 @@ function Invoke-Mold {
                 $EachFileContent = $EachFileContent -replace "(?s)$BlockStart.*?$BlockEnd", $null
             }
         }
-        Out-File -FilePath $_ -InputObject $EachFileContent
+    
+        Out-File -FilePath $_ -InputObject $EachFileContent -NoNewline
     }
 
     if (-not (Test-Path $DestinationPath -PathType Container)) {
@@ -242,7 +243,7 @@ function Invoke-Mold {
 
     # Copy all files to destination
     try {
-        Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -Force -ErrorAction Stop
+        Copy-Item -Path "$locaTempFolder\*" -Destination $DestinationPath -Recurse -ErrorAction Stop -Confirm
     } catch {
         $Error[0]
         Write-Error 'Something went wrong while copying'
