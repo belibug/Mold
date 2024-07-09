@@ -1,6 +1,0 @@
-Hello <% MOLD_TEXT_StudenName %>
-
-Your Application has been <% MOLD_CHOICE_ApplicationStatus %>
-
-Regards,
-University Management
