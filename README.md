@@ -7,7 +7,7 @@
     <a target="_blank" href="https://GitHub.com/belibug/Mold/issues/"><img src="https://img.shields.io/github/issues/belibug/Mold.svg" /></a>
     <a target="_blank" href="https://github.com/belibug/Mold/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed/belibug/Mold.svg" /></a><br>
 </div>
-Inspired by [Plaster](https://github.com/PowerShellOrg/Plaster), Mold is PowerShell template & scaffolding engine that lets you effortlessly craft templates for any language, on any platform. 🚀 Deploy in a flash with interactive prompts or answer files – your choice!  
+Inspired by Plaster, Mold is PowerShell template & scaffolding engine that lets you effortlessly craft templates for any language, on any platform. 🚀 Deploy in a flash with interactive prompts or answer files – your choice!  
 
 [![Mold@PowerShell Gallery][BadgeIOCount]][PSGalleryLink] ![WorkFlow Status][WorkFlowStatus]
 
