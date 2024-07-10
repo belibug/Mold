@@ -69,6 +69,11 @@ flowchart LR
 
 Get familiar with the core components of Mold's templating engine to create powerful templates and become a templating ninja! 
 
+### Requirements
+
+Mold is only compatible on PowerShell 7 and beyond. While we tried hard to make it work with older versions, some limitations led us to focus on the efficient code and cross-platform compatibility, which was not possible in older version of PowerShell. You can dive deeper into the reasoning behind this decision in our [Design Decision Document](/docs/DesignDecisions.md). 
+
+
 ### Placeholders
 
 Placeholders are the secret sauce behind Mold's magic. They follow a simple pattern: `<% MOLD_TYPE_Variable %>`. Let's break down the different types and their superpowers:
