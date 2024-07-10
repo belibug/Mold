@@ -7,7 +7,7 @@
     <a target="_blank" href="https://GitHub.com/belibug/Mold/issues/"><img src="https://img.shields.io/github/issues/belibug/Mold.svg" /></a>
     <a target="_blank" href="https://github.com/belibug/Mold/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed/belibug/Mold.svg" /></a><br>
 </div>
-Inspired by [Plaster(https://github.com/PowerShellOrg/Plaster)], Mold is PowerShell template & scaffolding engine that lets you effortlessly craft templates for any language, on any platform. 🚀 Deploy in a flash with interactive prompts or answer files – your choice!  
+Inspired by [Plaster](https://github.com/PowerShellOrg/Plaster), Mold is PowerShell template & scaffolding engine that lets you effortlessly craft templates for any language, on any platform. 🚀 Deploy in a flash with interactive prompts or answer files – your choice!  
 
 [![Mold@PowerShell Gallery][BadgeIOCount]][PSGalleryLink] ![WorkFlow Status][WorkFlowStatus]
 
@@ -44,7 +44,7 @@ Invoke-Mold -Name AppStatus -DestinationPath "c:\Temp"
 - Seamlessly update existing Mold Templates.
 - Version control your templates independently with git.
 
-## 🛠️ **Mold Workflow:**
+## 🛠️ Mold Workflow:
 
 ```mermaid
 flowchart LR
@@ -65,7 +65,7 @@ flowchart LR
    - **Prepped & Ready:** Use a pre-filled answer file to automatically supply the values.
 6. **Ta-da!** Mold replaces the placeholders with your values and deploys your customized template. 
 
-## 🧩 **Mold's Building Blocks:**
+## 🧩 Mold's Building Blocks:
 
 Get familiar with the core components of Mold's templating engine to create powerful templates and become a templating ninja! 
 
@@ -88,7 +88,7 @@ function <% MOLD_TEXT_FunctionName %> {
 }
 ```
 
-### **MoldManifest**
+### MoldManifest
 
 The MoldManifest is a JSON file that holds the template data. It holds all the information Mold needs to bring your template to life. There are two main parts to this file:
 
@@ -159,7 +159,7 @@ Few things to note about `MOLD_SCRIPT.ps1`
 
 ## Commands Usage
 
-### 🔍 **Discovering Mold Templates:**
+### 🔍 Discovering Mold Templates:
 
 Find all Mold's templates with `Get-MoldTemplate`.  By default, it scours these locations:
 
@@ -172,7 +172,7 @@ Want to explore a specific folder? No problem! Use the `-TemplatePath` parameter
 >
 > You can declare `MOLD_TEMPLATES` environment variable with templates path (use semicolon separated paths for multiple template paths). These templates are readily available and can be easily invoked using names (with tab completion)
 
-### 🚀 **Invoking Mold Templates:**
+### 🚀 Invoking Mold Templates:
 
 Invoke Mold Templates using `Invoke-Mold` . Choose your preferred method:
 
@@ -194,7 +194,7 @@ Invoke-Mold -TemplatePath /path/to/template-directory -DestinationPath /path/to/
 Invoke-Mold -Name SimpleFunction -AnswerFile /path/to/answerfile.json
 ```
 
-### 🤖 **Streamlining with Answer Files:**
+### 🤖 Streamlining with Answer Files:
 
 Generate a answer file  template effortlessly using `New-MoldAnswerFile` which can be pre-filled and fed to Mold for non-interactive experience. This handy tool simplifies customization and enables seamless, unattended template execution.
 
@@ -204,7 +204,7 @@ For advanced automation, programmatically create answer files and integrate them
 New-MoldAnswerFile -Name SimpleFunction
 ```
 
-### 🔨 **Creating Your Own Mold Template:**
+### 🔨 Creating Your Own Mold Template:
 
 1. **Craft Your Template:** Build the content and file structure for your template within a dedicated directory.
 2. **Insert Placeholders:** Add Mold's placeholders (e.g., `<% MOLD_TYPE_Variable %>`) throughout your files to designate dynamic content areas.
@@ -214,7 +214,7 @@ New-MoldAnswerFile -Name SimpleFunction
 New-MoldManifest -Path /path/to/template-directory
 ```
 
-### 🔄 **Updating Your Mold Template:**
+### 🔄 Updating Your Mold Template:
 
 Did you make some changes to your template? No worries! Just run `Update-MoldManifest` and it will refresh your `MoldManifest.json` to reflect the latest modifications, whether it's adding, removing, or changing placeholder types.
 
