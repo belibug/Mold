@@ -1,18 +1,18 @@
 {
   "metadata": {
-    "name": "sam1",
+    "name": "SimpleFunction",
     "version": "0.0.1",
-    "title": "Sample 1",
+    "title": "Simple PowerShell function",
     "description": "MOLD Template",
-    "guid": "d715b9a4-8b62-4f15-ac0b-a6da628292cc",
+    "guid": "c21969a0-7ac9-436f-9c9b-53059e0cb14e",
     "FileTypes": "ps1, txt, md, json, xml, psm1, psd1",
     "LiteralFile": "config"
   },
   "parameters": {
     "FunctionName": {
-      "Caption": "FunctionName",
-      "Message": "Ask your question",
-      "Prompt": "Response",
+      "Caption": "Function Name",
+      "Message": "Provide a valid name for function, using Verb-Noun syntax recomended",
+      "Prompt": "Name",
       "Type": "TEXT",
       "Default": ""
     }
