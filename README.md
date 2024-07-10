@@ -7,10 +7,9 @@
     <a target="_blank" href="https://GitHub.com/belibug/Mold/issues/"><img src="https://img.shields.io/github/issues/belibug/Mold.svg" /></a>
     <a target="_blank" href="https://github.com/belibug/Mold/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed/belibug/Mold.svg" /></a><br>
 </div>
-MOLD: Inspired by Plaster, the PowerShell template and scaffolding engine that lets you effortlessly craft templates for any language, on any platform. 🚀 Deploy in a flash with interactive prompts or answer files – your choice! ✨
+Inspired by [Plaster(https://github.com/PowerShellOrg/Plaster)], Mold is PowerShell template & scaffolding engine that lets you effortlessly craft templates for any language, on any platform. 🚀 Deploy in a flash with interactive prompts or answer files – your choice!  
 
-[![Mold@PowerShell Gallery][BadgeIOCount]][PSGalleryLink]
-![WorkFlow Status][WorkFlowStatus]
+[![Mold@PowerShell Gallery][BadgeIOCount]][PSGalleryLink] ![WorkFlow Status][WorkFlowStatus]
 
 ## Description
 
@@ -24,7 +23,7 @@ Mold operates on Mold Templates,which can be generated using Mold commands (that
 
 ## **Installation:**
 
-Get the Mold module from the PowerShell Gallery and you're ready to roll!
+Get the Mold module from the [PowerShell Gallery][PSGalleryLink].
 
 ```powershell
 Install-Module -Name Mold
@@ -39,23 +38,13 @@ Invoke-Mold -Name AppStatus -DestinationPath "c:\Temp"
 
 ## ✨ Mold’s Awesome Features
 
-- Effortlessly create Mold Templates—no XML or custom syntax required.
-
-- Retrieve templates from local folders, modules, or git repos.
+- Effortlessly create Mold Templates, no XML or custom syntax required.
+- Store and Retrieve templates from local folders, modules, or git repos.
 - Invoke Mold by name (with tab completion) or template path.
 - Seamlessly update existing Mold Templates.
 - Version control your templates independently with git.
 
-## 🛠️ **Mold's Magic Unveiled:**
-
-1. **Blueprint Your Template:** Craft the content and folders that form your template's structure.
-2. **Mark Your Spots:** Sprinkle Mold placeholders (`<% MOLD_TEXT_FunctionName %>`) where you want dynamic content.
-3. **Create the Mold Template:** Use Mold to whip up a `MoldManifest.json` file, your template's instruction manual. 
-4. **Unleash Mold:** Summon your template by its name (or path) and tell Mold where to put it.
-5. Fill in the Blanks:
-   - **Chatty Mode:** Answer Mold's prompts to provide values for each placeholder.
-   - **Prepped & Ready:** Use a pre-filled answer file to automatically supply the values.
-6. **Ta-da!** Mold replaces the placeholders with your values and deploys your customized template. 
+## 🛠️ **Mold Workflow:**
 
 ```mermaid
 flowchart LR
@@ -67,6 +56,15 @@ flowchart LR
     E --> G
 ```
 
+1. **Blueprint Your Template:** Craft the content and folders that form your template's structure.
+2. **Mark Your Spots:** Sprinkle Mold placeholders (`<% MOLD_TEXT_FunctionName %>`) where you want dynamic content.
+3. **Create the Mold Template:** Use Mold to whip up a `MoldManifest.json` file, your template's instruction manual. 
+4. **Unleash Mold:** Summon your template by its name (or path) and tell Mold where to put it.
+5. Fill in the Blanks:
+   - **Chatty Mode:** Answer Mold's prompts to provide values for each placeholder.
+   - **Prepped & Ready:** Use a pre-filled answer file to automatically supply the values.
+6. **Ta-da!** Mold replaces the placeholders with your values and deploys your customized template. 
+
 ## 🧩 **Mold's Building Blocks:**
 
 Get familiar with the core components of Mold's templating engine to create powerful templates and become a templating ninja! 
@@ -75,11 +73,11 @@ Get familiar with the core components of Mold's templating engine to create powe
 
 Placeholders are the secret sauce behind Mold's magic. They follow a simple pattern: `<% MOLD_TYPE_Variable %>`. Let's break down the different types and their superpowers:
 
-| Type    | Syntax                 | Description                                                                                                  |
-| ------- | ---------------------- | ------------------------------------------------------------------------------------------------------------ |
-| TEXT    | MOLD_TEXT_ProjName    | Accepts any string value. Perfect for project names, descriptions, or anything that needs a bit of text.      |
-| CHOICE  | MOLD_CHOICE_EnableGit | Presents users with a list of options to choose from. Ideal for enabling/disabling features or making decisions.  |
-| BLOCK   | MOLD_BLOCK_HelpContent_START and MOLD_BLOCK_HelpContent_END | BLOCK placeholders empower users to make content decisions. They present a simple yes/no question, determining if a specific text section makes it into the final output.  Important note: Every BLOCK placeholder must have clearly defined START and END points within the template. |
+| Type   | Syntax                                                      | Description                                                                                                                                                                                                                                                                            |
+| ------ | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TEXT   | MOLD_TEXT_ProjName                                          | Accepts any string value. Perfect for project names, descriptions, or anything that needs a bit of text.                                                                                                                                                                               |
+| CHOICE | MOLD_CHOICE_EnableGit                                       | Presents users with a list of options to choose from. Ideal for enabling/disabling features or making decisions.                                                                                                                                                                       |
+| BLOCK  | MOLD_BLOCK_HelpContent_START and MOLD_BLOCK_HelpContent_END | BLOCK placeholders empower users to make content decisions. They present a simple yes/no question, determining if a specific text section makes it into the final output.  Important note: Every BLOCK placeholder must have clearly defined START and END points within the template. |
 
 Sample file with Placeholders in it, lets call it `Function.ps1`
 
