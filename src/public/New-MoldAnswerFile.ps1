@@ -72,7 +72,7 @@ function New-MoldAnswerFile {
                 $Output = 'Any string value'
             }
         }
-        if ($data.Type -eq 'CHOICE') {
+        if ($data.Type -eq 'CHOICE' -or $data.Type -eq 'BLOCK') {
             $Output = $data.CHOICE.PSObject.Properties.Name -join ','
         }
         return $Output

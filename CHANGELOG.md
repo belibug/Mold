@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.5] - 2024-07-08
+
+### Fixed
+
+- Answer file now generates valid options field for BLOCK type
+
 ## [0.0.4] - 2024-07-08
 
 ## Added
