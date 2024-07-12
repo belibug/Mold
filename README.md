@@ -17,6 +17,10 @@ Mold operates on Mold Templates,which can be generated using Mold commands (that
 
 ## 🧙‍♂️ Mold in Action
 
+> [!IMPORTANT]
+>
+> Check out my in-depth [blog post](https://blog.belibug.com/post/ps-mold) for a step-by-step walkthrough and real-world examples of creating and deploying template
+
  Simply summon your template by name, answer questions based on template (or provide the answers upfront), and voilà! Your fully rendered files materialize right before your eyes. ✨
 
 ![image-20240709185546750](./assets/image-20240709185546750.png)
