@@ -1,4 +1,4 @@
-name: Run Tests
+name: Pester Tests
 
 # Controls when the workflow will run
 on:
@@ -10,21 +10,29 @@ on:
       - main
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: pwsh
+
 jobs:
-  build:
+  Tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
 
-      - name: Install ModuleTools module form PSGallery
-        run: |
-          Install-PSResource -Repository PSGallery -Name ModuleTools -TrustRepository
-        shell: pwsh
+      - name: 📦 Install ModuleTools module form PSGallery
+        run: Install-PSResource -Repository PSGallery -Name ModuleTools -TrustRepository
 
-      - name: Build Module
+      - name: 🏗️ Build Module
         run: Invoke-MTBuild -Verbose
-        shell: pwsh
 
-      - name: Run Pester Tests
+      - name: 📝 Generate Report
+        run: |
+          # Get list of files in the dist directory directory
+          $Report = New-MDHeader -Text "Output Files 📁" -Level 2
+          $Report += Get-ChildItem -Path ./dist -Recurse | Select-Object Name, Directory | New-MDTable 
+          Set-Content -Path $GITHUB_STEP_SUMMARY -Value $Report
+
+      - name: 🧪 Run Pester Tests
         run: Invoke-MTTest
-        shell: pwsh

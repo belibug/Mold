@@ -10,32 +10,43 @@ on:
 
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: pwsh
+
 jobs:
-  build:
+  Publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
 
-      - name: Install ModuleTools module form PSGallery
-        run: |
-          Install-PSResource -Repository PSGallery -Name ModuleTools -TrustRepository
-        shell: pwsh
+      - name: 📦 Install ModuleTools module form PSGallery
+        run: Install-PSResource -Repository PSGallery -Name ModuleTools -TrustRepository
 
-      - name: Build Module
+      - name: 🏗️ Build Module
         run: Invoke-MTBuild -Verbose
-        shell: pwsh
 
-      - name: Run Pester Tests
+      - name: 🧪 Run Pester Tests
         run: Invoke-MTTest
-        shell: pwsh
 
-      - name: List files
+      - name: 📝 Generate Report
         run: Get-ChildItem ./dist -Recurse
-        shell: pwsh
 
-      - name: Publish Package to Github
+      - name: 📝 Generate Report
         run: |
-          Publish-PSResource -Path ./dist/Mold -Repository PSGallery -ApiKey $Env:ApiKey
+          # Get list of files in the dist directory directory
+          $Report = New-MDHeader -Text "Output Files 📁" -Level 2
+          $Report += Get-ChildItem -Path ./dist -Recurse | Select-Object Name, Directory | New-MDTable 
+          Set-Content -Path $GITHUB_STEP_SUMMARY -Value $Report
+
+      - name: 🚀 Publish Package to PSGallery
+        run: |
+          try {
+            Publish-PSResource -Path ./dist/Mold -Repository PSGallery -ApiKey $Env:ApiKey -Verbose
+          } catch {
+            Write-Error "Publishing to PSGallery failed: $($_.Exception.Message)"
+            exit 1 # Fail the workflow on error
+          }
         env:
           ApiKey: ${{ secrets.PSGALLERY_API }}
-        shell: pwsh
