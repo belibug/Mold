@@ -31,14 +31,12 @@ jobs:
         run: Invoke-MTTest
 
       - name: 📝 Generate Report
-        run: Get-ChildItem ./dist -Recurse
-
-      - name: 📝 Generate Report
         run: |
           # Get list of files in the dist directory directory
           $Report = New-MDHeader -Text "Output Files 📁" -Level 2
           $Report += Get-ChildItem -Path ./dist -Recurse | Select-Object Name, Directory | New-MDTable 
-          Set-Content -Path $GITHUB_STEP_SUMMARY -Value $Report
+          echo "$Report" >> $env:GITHUB_STEP_SUMMARY
+          echo "$Report"
 
       - name: 🚀 Publish Package to PSGallery
         run: |
