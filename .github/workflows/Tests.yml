@@ -33,6 +33,7 @@ jobs:
           $Report = New-MDHeader -Text "Output Files 📁" -Level 2
           $Report += Get-ChildItem -Path ./dist -Recurse | Select-Object Name, Directory | New-MDTable 
           echo "$Report" >> $GITHUB_STEP_SUMMARY
+          echo "$Report" 
 
       - name: 🧪 Run Pester Tests
         run: Invoke-MTTest
